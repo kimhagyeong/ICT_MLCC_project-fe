@@ -4,11 +4,16 @@
 <h1>자주쓰는 패키지와 기본 템플릿!</h1>
 <h3>새로운 리액트 프로젝트 시작할 때 확인하기</h3>
 
-<h4>npx create-react-app my-app</h4>
-<h4>cd my-app</h4>
-<h4>npm install axios</h4>
-<h4>npm install @material-ui/core</h4>
-<h4>npm install react-router-dom</h4>
+
+```
+npx create-react-app my-app
+cd my-app
+npm install axios
+npm install @material-ui/core
+npm install react-router-dom
+```
+
+
 <br />
 <br />
 <br />
