@@ -1,14 +1,14 @@
 import React from 'react';
 import './App.css';
 import { Route, BrowserRouter as Router } from "react-router-dom";
-import mainpage from "./component/mainpage";
+import Mainpage from "./component/Mainpage/index";
 
 function App() {
   return (
     <div className="App">
       <Router>
         <main>
-          <Route path="/" component={mainpage} />
+          <Route path="/" component={Mainpage} />
         </main>
       </Router>
     </div>

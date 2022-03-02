@@ -7,3 +7,10 @@
   -khtml-user-select: none;
   user-select:none;
 }
+
+html{
+  font-size: 19.20px;
+}
+div{
+  box-sizing: border-box;
+}
