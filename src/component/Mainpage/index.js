@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import Container from "../Resize tool/resize"
 import Grid from '@material-ui/core/Grid';
 import AlbumIcon from '@material-ui/icons/Album';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -177,11 +176,11 @@ const SearchGrid = styled(Grid)`
 const errorSteps = [
     {
         color: '#ff7300',
-        imgPath:ErrorImg,
+        imgPath: ErrorImg,
     },
     {
         color: '#ff7300',
-        imgPath:NormalImg,
+        imgPath: NormalImg,
     },
     {
         color: '#ff3300',
@@ -194,11 +193,11 @@ const errorSteps = [
 const normalSteps = [
     {
         color: '#3dc000',
-        imgPath:NormalImg,
+        imgPath: NormalImg,
     },
     {
         color: '#3dc000',
-        imgPath:ErrorImg,
+        imgPath: ErrorImg,
     },
     {
         color: '#ff7300',
@@ -245,9 +244,9 @@ export default (props) => {
     //     carousel.style.transform = "rotateY(" + deg + "deg)";
     //   }, [deg]);
 
-    const imgList = (color, name, index, propsStep,setStep) => {
+    const imgList = (color, name, index, propsStep, setStep) => {
         return (
-            <ListDiv background={color} key={"List" + name} onClick={()=>handleClickList(index,setStep)}>
+            <ListDiv background={color} key={"List" + name} onClick={() => handleClickList(index, setStep)}>
                 <Grid item xs={1}>
                     {propsStep === index ? <ArrowRightAltIcon /> : null}
                 </Grid>
@@ -272,7 +271,7 @@ export default (props) => {
     const [threshold, setThreshold] = React.useState(85);
     const [cutOff, setCutOff] = React.useState(5);
 
-    const handleClickList = (index, setStep) =>{
+    const handleClickList = (index, setStep) => {
         setStep(index);
     }
 
@@ -331,208 +330,206 @@ export default (props) => {
     };
 
     return (
-        <header className="App-header">
-            <Container>
-                <ContainerGrid container
-                    spacing={2}
-                    direction="row"
-                    justifyContent="center"
-                    alignItems="center" >
-                    <MonitoringStepper item xs={6}>
-                        <AutoPlaySwipeableViews
-                            axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-                            index={normalStep}
-                            // onChangeIndex={handleStepChange}
-                            enableMouseEvents
-                        >
-                            {normalSteps.map((step, index) => (
-                                <div key={"normalStepDiv" + step.imgPath}>
-                                    {Math.abs(normalStep - index) <= 2 ? (
-                                        <img className={classes.img} src={step.imgPath} alt={step.label} key={"normalStepImg" + step.imgPath} />
-                                    ) : null}
-                                </div>
-                            ))}
-                        </AutoPlaySwipeableViews>
-                        <MobileStepper
-                            steps={maxNormalSteps}
-                            position="static"
-                            variant="text"
-                            activeStep={normalStep}
-                            nextButton={
-                                <Button size="small" onClick={handleNormalNext} disabled={normalStep === maxNormalSteps - 1}>
-                                    Next
-                                    {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-                                </Button>
-                            }
-                            backButton={
-                                <Button size="small" onClick={handleNormalBack} disabled={normalStep === 0}>
-                                    {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-                                    Back
-                                </Button>
-                            }
-                        />
-                    </MonitoringStepper>
+        <>
+            <ContainerGrid container
+                spacing={2}
+                direction="row"
+                justifyContent="center"
+                alignItems="center" >
+                <MonitoringStepper item xs={6}>
+                    <AutoPlaySwipeableViews
+                        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
+                        index={normalStep}
+                        // onChangeIndex={handleStepChange}
+                        enableMouseEvents
+                    >
+                        {normalSteps.map((step, index) => (
+                            <div key={"normalStepDiv" + step.imgPath}>
+                                {Math.abs(normalStep - index) <= 2 ? (
+                                    <img className={classes.img} src={step.imgPath} alt={step.label} key={"normalStepImg" + step.imgPath} />
+                                ) : null}
+                            </div>
+                        ))}
+                    </AutoPlaySwipeableViews>
+                    <MobileStepper
+                        steps={maxNormalSteps}
+                        position="static"
+                        variant="text"
+                        activeStep={normalStep}
+                        nextButton={
+                            <Button size="small" onClick={handleNormalNext} disabled={normalStep === maxNormalSteps - 1}>
+                                Next
+                                {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+                            </Button>
+                        }
+                        backButton={
+                            <Button size="small" onClick={handleNormalBack} disabled={normalStep === 0}>
+                                {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+                                Back
+                            </Button>
+                        }
+                    />
+                </MonitoringStepper>
 
-                    <MonitoringStepper item xs={6}>
-                        <AutoPlaySwipeableViews
-                            axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-                            index={errorStep}
-                            // onChangeIndex={handleStepChange}
-                            enableMouseEvents
-                        >
-                            {errorSteps.map((step, index) => (
-                                <div key={"errorStepDiv" + step.imgPath}>
-                                    {Math.abs(errorStep - index) <= 2 ? (
-                                        <img className={classes.img} src={step.imgPath} alt={step.label} key={"errorStepImg" + index} />
-                                    ) : null}
-                                </div>
-                            ))}
-                        </AutoPlaySwipeableViews>
-                        <MobileStepper
-                            steps={maxErrorSteps}
-                            position="static"
-                            variant="text"
-                            activeStep={errorStep}
-                            nextButton={
-                                <Button size="small" onClick={handleErrorNext} disabled={errorStep === maxErrorSteps - 1}>
-                                    Next
-                                    {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-                                </Button>
-                            }
-                            backButton={
-                                <Button size="small" onClick={handleErrorBack} disabled={errorStep === 0}>
-                                    {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-                                    Back
-                                </Button>
-                            }
-                        />
-                    </MonitoringStepper>
-
+                <MonitoringStepper item xs={6}>
+                    <AutoPlaySwipeableViews
+                        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
+                        index={errorStep}
+                        // onChangeIndex={handleStepChange}
+                        enableMouseEvents
+                    >
+                        {errorSteps.map((step, index) => (
+                            <div key={"errorStepDiv" + step.imgPath}>
+                                {Math.abs(errorStep - index) <= 2 ? (
+                                    <img className={classes.img} src={step.imgPath} alt={step.label} key={"errorStepImg" + index} />
+                                ) : null}
+                            </div>
+                        ))}
+                    </AutoPlaySwipeableViews>
+                    <MobileStepper
+                        steps={maxErrorSteps}
+                        position="static"
+                        variant="text"
+                        activeStep={errorStep}
+                        nextButton={
+                            <Button size="small" onClick={handleErrorNext} disabled={errorStep === maxErrorSteps - 1}>
+                                Next
+                                {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+                            </Button>
+                        }
+                        backButton={
+                            <Button size="small" onClick={handleErrorBack} disabled={errorStep === 0}>
+                                {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+                                Back
+                            </Button>
+                        }
+                    />
+                </MonitoringStepper>
 
 
 
 
 
-                    <ListContainer item xs={6} style={{ marginRight: "2.4rem" }}>
-                        <h2>양품(Normal)</h2>
-                        <div>{normalSteps.map((Element, index) => (imgList(Element.color, Element.imgPath, index, normalStep,setNormalStep)))}</div>
-                    </ListContainer>
-                    <ListContainer item xs={6} style={{ marginLeft: "2.4rem" }}>
-                        <h2>불량(Error)</h2>
-                        <div>{errorSteps.map((Element, index) => (imgList(Element.color, Element.imgPath, index, errorStep,setErrorStep)))}</div>
-                    </ListContainer>
 
-                    <Grid item xs={4}></Grid>
-                    <CustomGrid item xs={8}>
-                        <Grid item xs={6}>
-                            <h2>Monitoring Type</h2>
-                            <FormControl>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={type}
-                                    label="Type"
-                                    onChange={typeHandleChange}
-                                >
-                                    <MenuItem value={"Default"}>Default</MenuItem>
-                                    <MenuItem value={"Period"}>Period</MenuItem>
-                                </Select>
-                                {type === "Default" ? null :
-                                    <>
-                                        <TextField
-                                            id="date"
-                                            label="Start Date"
-                                            type="date"
-                                            InputLabelProps={{
-                                                shrink: true,
-                                            }}
-                                        />
-                                        &nbsp; ~ &nbsp;
-                                        <TextField
-                                            id="date"
-                                            label="End Date"
-                                            type="date"
-                                            InputLabelProps={{
-                                                shrink: true,
-                                            }}
-                                        />
-                                    </>}
+                <ListContainer item xs={6} style={{ marginRight: "2.4rem" }}>
+                    <h2>양품(Normal)</h2>
+                    <div>{normalSteps.map((Element, index) => (imgList(Element.color, Element.imgPath, index, normalStep, setNormalStep)))}</div>
+                </ListContainer>
+                <ListContainer item xs={6} style={{ marginLeft: "2.4rem" }}>
+                    <h2>불량(Error)</h2>
+                    <div>{errorSteps.map((Element, index) => (imgList(Element.color, Element.imgPath, index, errorStep, setErrorStep)))}</div>
+                </ListContainer>
 
-                            </FormControl>
-                        </Grid>
-
-
-
-                        <Grid item xs={6}>
-                            <form name="setting">
-                                <Grid item xs={4}><h2>Warning ratio</h2></Grid>
-                                <Grid item xs={3}>
-                                    <Input
-                                        type="number"
-                                        name="fromRatio"
-                                        // InputLabelProps={{
-                                        //     shrink: true,
-                                        // }}
-                                        defaultValue={fromRatio}
-                                        onChange={handleChange}
-                                        endAdornment={<InputAdornment position="end">%</InputAdornment>}
+                <Grid item xs={4}></Grid>
+                <CustomGrid item xs={8}>
+                    <Grid item xs={6}>
+                        <h2>Monitoring Type</h2>
+                        <FormControl>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value={type}
+                                label="Type"
+                                onChange={typeHandleChange}
+                            >
+                                <MenuItem value={"Default"}>Default</MenuItem>
+                                <MenuItem value={"Period"}>Period</MenuItem>
+                            </Select>
+                            {type === "Default" ? null :
+                                <>
+                                    <TextField
+                                        id="date"
+                                        label="Start Date"
+                                        type="date"
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
                                     />
-                                </Grid>
-                                <Grid item xs={2}>
-                                    ~
-                                </Grid>
-                                <Grid item xs={3}>
-                                    <Input
-                                        type="number"
-                                        name="toRatio"
-                                        // InputLabelProps={{
-                                        //     shrink: true,
-                                        // }}
-                                        defaultValue={toRatio}
-                                        onChange={handleChange}
-                                        endAdornment={<InputAdornment position="end">%</InputAdornment>}
+                                    &nbsp; ~ &nbsp;
+                                    <TextField
+                                        id="date"
+                                        label="End Date"
+                                        type="date"
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
                                     />
-                                </Grid>
-                                <Grid item xs={6}><h2>Margin threshold</h2></Grid>
-                                <Grid item xs={6}>
-                                    <Input
-                                        type="number"
-                                        name="threshold"
-                                        // InputLabelProps={{
-                                        //     shrink: true,
-                                        // }}
-                                        defaultValue={threshold}
-                                        onChange={handleChange}
-                                        endAdornment={<InputAdornment position="end">%</InputAdornment>}
-                                    />
-                                </Grid>
-                                <Grid item xs={6}><h2>Cut off</h2></Grid>
-                                <Grid item xs={6}>
-                                    <Input
-                                        type="number"
-                                        name="cutOff"
-                                        // InputLabelProps={{
-                                        //     shrink: true,
-                                        // }}
-                                        defaultValue={cutOff}
-                                        onChange={handleChange}
-                                        endAdornment={<InputAdornment position="end">px</InputAdornment>}
-                                    />
-                                </Grid>
-                            </form>
-                        </Grid>
-                    </CustomGrid>
+                                </>}
 
-                    <SearchGrid item xs={1}>
-                        <Button
-                            variant="contained"
-                            color="default"
-                        >
-                            Search
-                        </Button>
-                    </SearchGrid>
-                </ContainerGrid>
-            </Container>
-        </header>
+                        </FormControl>
+                    </Grid>
+
+
+
+                    <Grid item xs={6}>
+                        <form name="setting">
+                            <Grid item xs={4}><h2>Warning ratio</h2></Grid>
+                            <Grid item xs={3}>
+                                <Input
+                                    type="number"
+                                    name="fromRatio"
+                                    // InputLabelProps={{
+                                    //     shrink: true,
+                                    // }}
+                                    defaultValue={fromRatio}
+                                    onChange={handleChange}
+                                    endAdornment={<InputAdornment position="end">%</InputAdornment>}
+                                />
+                            </Grid>
+                            <Grid item xs={2}>
+                                ~
+                            </Grid>
+                            <Grid item xs={3}>
+                                <Input
+                                    type="number"
+                                    name="toRatio"
+                                    // InputLabelProps={{
+                                    //     shrink: true,
+                                    // }}
+                                    defaultValue={toRatio}
+                                    onChange={handleChange}
+                                    endAdornment={<InputAdornment position="end">%</InputAdornment>}
+                                />
+                            </Grid>
+                            <Grid item xs={6}><h2>Margin threshold</h2></Grid>
+                            <Grid item xs={6}>
+                                <Input
+                                    type="number"
+                                    name="threshold"
+                                    // InputLabelProps={{
+                                    //     shrink: true,
+                                    // }}
+                                    defaultValue={threshold}
+                                    onChange={handleChange}
+                                    endAdornment={<InputAdornment position="end">%</InputAdornment>}
+                                />
+                            </Grid>
+                            <Grid item xs={6}><h2>Cut off</h2></Grid>
+                            <Grid item xs={6}>
+                                <Input
+                                    type="number"
+                                    name="cutOff"
+                                    // InputLabelProps={{
+                                    //     shrink: true,
+                                    // }}
+                                    defaultValue={cutOff}
+                                    onChange={handleChange}
+                                    endAdornment={<InputAdornment position="end">px</InputAdornment>}
+                                />
+                            </Grid>
+                        </form>
+                    </Grid>
+                </CustomGrid>
+
+                <SearchGrid item xs={1}>
+                    <Button
+                        variant="contained"
+                        color="default"
+                    >
+                        Search
+                    </Button>
+                </SearchGrid>
+            </ContainerGrid>
+        </>
     );
 };

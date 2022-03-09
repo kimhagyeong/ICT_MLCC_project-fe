@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-// import { render } from "react-dom";
 import { Resizable } from "re-resizable";
 
 const style = {

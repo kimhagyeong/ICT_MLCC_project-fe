@@ -1,29 +1,3 @@
-
-# new_react_Mytemplate
-#리액트시작용#참고용#mapping#api#axios
-<h1>자주쓰는 패키지와 기본 템플릿!</h1>
-<h3>새로운 리액트 프로젝트 시작할 때 확인하기</h3>
-
-
-```
-npx create-react-app my-app
-cd my-app
-npm install axios
-npm install @material-ui/core
-npm install react-router-dom
-```
-
-
-<br />
-<br />
-<br />
-<p> APP.js -> component-> mainpage.js </p>
-<br/>
-<p>인스톨해도 안되면 버전 문제.. 화긴..</p>
-<br />
-<br />
-<br />
-
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
