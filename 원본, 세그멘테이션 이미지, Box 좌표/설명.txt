@@ -1,0 +1,7 @@
+원본 이미지와 Segmentation 이미지 샘플
+
+각 이미지에 포함된 핵심 영역 Box의 좌표와 세그멘테이션 Polygon 좌표가 annotation 파일에 포함되어 있다.
+
+Box 좌표는 "bbox"의 value로 [cx, cy, w, h] 값이 저장되어 있다.
+
+cx, cy는 이미지 내에서 해당 박스의 센터 좌표, w, h은 width와 heigt이다.

@@ -28,8 +28,8 @@ export default (props) => {
                 setHeight(ref.style.height);
             }}
             onResizeStop={(e, direction, ref, d) => {
-                document.getElementsByTagName('html')[0].setAttribute('style','font-size : '+parseFloat(ref.style.width)/100+"px !important;");
-                console.log(width+"|"+height);
+                document.getElementsByTagName('html')[0].setAttribute('style', 'font-size : ' + parseFloat(ref.style.width) / 100 + "px !important;");
+                console.log(width + "|" + height);
             }}
         >
             {props.children}

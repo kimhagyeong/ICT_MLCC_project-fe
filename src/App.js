@@ -3,7 +3,9 @@ import './App.css';
 import { Route, BrowserRouter as Router } from "react-router-dom";
 import Mainpage from "./component/Mainpage/index";
 import Container from "./component/Resize tool/resize";
-import About from "./component/About/index";
+import Detail from "./component/Detail/index";
+import Img from "./component/Detail/TabImg/img";
+
 
 function App() {
   return (
@@ -11,9 +13,13 @@ function App() {
         <Container>
           <Router>
               <Route exact path="/" component={Mainpage} />
-              <Route path="/about/:img" component={About}/>
+              <Route path="/detail/:img" component={Detail}/>
           </Router>
         </Container>
+
+        <Router>
+              <Route path="/img/:img" component={Img}/>
+          </Router>
     </div>
   );
 }
