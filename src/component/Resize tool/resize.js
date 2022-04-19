@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Resizable } from "re-resizable";
+import styled from "styled-components";
+import Login from './login.js'
 
 const style = {
     display: "flex",
@@ -13,26 +15,30 @@ const style = {
 export default (props) => {
     const [width, setWidth] = useState("99vw");
     const [height, setHeight] = useState("55vw");
-
+    
     return (
-        <Resizable
-            style={style}
-            defaultSize={{
-                width: "1920px",
-                height: "1080px"
-            }}
-            // minHeight
-            // minWidth
-            onResize={(e, direction, ref, d) => {
-                setWidth(ref.style.width);
-                setHeight(ref.style.height);
-            }}
-            onResizeStop={(e, direction, ref, d) => {
-                document.getElementsByTagName('html')[0].setAttribute('style', 'font-size : ' + parseFloat(ref.style.width) / 100 + "px !important;");
-                console.log(width + "|" + height);
-            }}
-        >
-            {props.children}
-        </Resizable>
+        <>
+            <Resizable
+                style={style}
+                defaultSize={{
+                    width: "1920px",
+                    height: "1080px"
+                }}
+                // minHeight
+                // minWidth
+                onResize={(e, direction, ref, d) => {
+                    setWidth(ref.style.width);
+                    setHeight(ref.style.height);
+                }}
+                onResizeStop={(e, direction, ref, d) => {
+                    document.getElementsByTagName('html')[0].setAttribute('style', 'font-size : ' + parseFloat(ref.style.width) / 100 + "px !important;");
+                    console.log(width + "|" + height);
+                }}
+            >
+                {props.children}
+                <Login></Login>
+            </Resizable>
+
+        </>
     );
 }
