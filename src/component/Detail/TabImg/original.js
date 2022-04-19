@@ -13,7 +13,7 @@ const Img = styled.img`
 export default (props) => {
     const setImg = () => {
         return (
-            <Img id={"original" + props.path} alt="#" src={tempImg}>
+            <Img id={"Original" + props.path} alt="#" src={tempImg}>
             </Img>
             )
     }
@@ -21,7 +21,7 @@ export default (props) => {
         <CommonPage 
             path={props.path}
             setImg={setImg}
-            tab={"original"}
+            tab={"Original"}
             />
     )
 }

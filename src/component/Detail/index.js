@@ -383,7 +383,7 @@ export default ({ match }) => {
                             <OriginalTab path={match.params.img} />
                         </TabPanel>
                         <TabPanel value={value} index={1}>
-                            <BoxTab path={match.params.img} />
+                            <BoxTab path={match.params.img} imgSrc={bboxImg}/>
                         </TabPanel>
                         <TabPanel value={value} index={2}>
                             <AnalysisTab path={match.params.img} imgSrc={bboxImg}/>
@@ -459,7 +459,7 @@ export default ({ match }) => {
             </ContainerGrid>
             <BBoxImg style={{zIndex:"2"}} id="boxContainer1"></BBoxImg>
             <BBoxImg style={{zIndex:"1"}} id="boxContainer2">
-                <img src={tempImg}></img>
+                <img src={tempImg} alt="#"></img>
                 {
                         bbox.map((element) => (
                             <div style={{ width: element[2] + "px", height: element[3] + "px", left: element[0] + "px", top: element[1] + "px" }}></div>

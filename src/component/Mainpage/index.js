@@ -71,6 +71,7 @@ const ListContainer = styled(Grid)`
         margin:auto;
         border-radius: 10px;
         padding:1rem;
+        overflow: auto;
     }
 `
 const ListDiv = styled.div`
@@ -191,6 +192,29 @@ const errorSteps = [
 
 
 const normalSteps = [
+    {
+        color: '#3dc000',
+        imgPath: NormalImg,
+    },
+    {
+        color: '#3dc000',
+        imgPath: ErrorImg,
+    },
+    {
+        color: '#ff7300',
+        imgPath:
+            'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250&q=80',
+    },
+    {
+        color: '#3dc000',
+        imgPath:
+            'https://images.unsplash.com/photo-1518732714860-b62714ce0c59?auto=format&fit=crop&w=400&h=250&q=60',
+    },
+    {
+        color: '#3dc000',
+        imgPath:
+            'https://images.unsplash.com/photo-1512341689857-198e7e2f3ca8?auto=format&fit=crop&w=400&h=250&q=60',
+    },
     {
         color: '#3dc000',
         imgPath: NormalImg,
