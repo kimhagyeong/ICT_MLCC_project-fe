@@ -1,3 +1,32 @@
+### 1. node install
+
+node 설치    
+https://nodejs.org/ko/download/
+
+<br/>
+
+### 2. Git clone
+```
+    git clone https://github.com/kimhagyeong/ICT_MLCC_project-fe.git
+```
+
+<br/>
+
+### 3. package install
+package.json 파일이 있는 위치에서
+```
+    npm i
+```
+
+<br/>
+
+### 4. node server start
+```
+    npm start
+```
+
+
+<br/><br/><br/>
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
