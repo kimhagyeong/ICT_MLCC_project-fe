@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from "styled-components";
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -13,9 +13,6 @@ import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Drawer from './TabImg/drawer'
 import Button from '@material-ui/core/Button';
-import tempImg from '../../resource/new_align_0001.jpg'
-import DefaultImg from '../../resource/DICE.png'
-import * as htmlToImage from 'html-to-image';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -129,76 +126,8 @@ const boxList = [
         marginRatio: '87.5%',
         imgPath:
             'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250&q=80',
-    },
-    {
-        color: '#ff3300',
-        marginRatio: '82.5%',
-        imgPath:
-            'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250&q=80',
-    },
-    {
-        color: '#3dc000',
-        marginRatio: '87.5%',
-        imgPath:
-            'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250&q=80',
-    },
-    {
-        color: '#3dc000',
-        marginRatio: '87.5%',
-        imgPath:
-            'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250&q=80',
-    },
-    {
-        color: '#ff3300',
-        marginRatio: '82.5%',
-        imgPath:
-            'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250&q=80',
-    },
-    {
-        color: '#3dc000',
-        marginRatio: '87.5%',
-        imgPath:
-            'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250&q=80',
-    },
-    {
-        color: '#3dc000',
-        marginRatio: '87.5%',
-        imgPath:
-            'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250&q=80',
-    },
-    {
-        color: '#ff3300',
-        marginRatio: '82.5%',
-        imgPath:
-            'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250&q=80',
-    },
-    {
-        color: '#3dc000',
-        marginRatio: '87.5%',
-        imgPath:
-            'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250&q=80',
     }
 ];
-const bbox = [
-    [
-        1195.08,
-        855.92,
-        109.73,
-        214.52
-    ],
-    [
-        96.74,
-        865.18,
-        103.54,
-        205.72
-    ],
-    [
-        2290.44,
-        852.98,
-        107.49,
-        213.8
-    ],
-]
 
 const ImgListDiv = styled.div`
     width:100%;
@@ -256,23 +185,6 @@ const ItemList = styled(Grid)`
         }
     }
 `;
-const BBoxImg = styled.div`
-    background-color:#f7f7f7;
-    width:2448px;
-    height:2048px;
-    position:absolute;
-    display:block;
-    top:0;
-    left:0;
-    img{
-        width:2448px;
-        height:2048px;
-    }
-    div{
-        border:5px solid rgba(200, 0, 0, 0.5);
-        position:absolute;
-    }
-`
 
 export default ({ match }) => {
     const classes = useStyles();
@@ -284,23 +196,6 @@ export default ({ match }) => {
     const [cutOff, setCutOff] = React.useState(5);
     const [open, setOpen] = React.useState(false);
     const [box, setBox] = React.useState();
-    const [bboxImg, setBboxImg] = React.useState(DefaultImg);
-
-    useEffect(() => {
-        var node = document.getElementById('boxContainer2');
-
-        htmlToImage.toJpeg(node,{width:2448,height:2048})
-        .then(function (dataUrl) {
-            var img = new Image();
-            img.src = dataUrl;
-            setBboxImg(img.src)
-            node.remove();
-            document.getElementById('boxContainer1').remove();
-        })
-        .catch(function (error) {
-            console.error('oops, something went wrong!', error);
-        });
-    }, []);
 
     const handleClickOpen = (elem) => {
         setOpen(true);
@@ -383,10 +278,10 @@ export default ({ match }) => {
                             <OriginalTab path={match.params.img} />
                         </TabPanel>
                         <TabPanel value={value} index={1}>
-                            <BoxTab path={match.params.img} imgSrc={bboxImg}/>
+                            <BoxTab path={match.params.img} />
                         </TabPanel>
                         <TabPanel value={value} index={2}>
-                            <AnalysisTab path={match.params.img} imgSrc={bboxImg}/>
+                            <AnalysisTab path={match.params.img} />
                         </TabPanel>
                     </div>
                 </Grid>
@@ -429,7 +324,7 @@ export default ({ match }) => {
                                     endAdornment={<InputAdornment position="end">%</InputAdornment>}
                                 />
                             </Grid>
-                            <Grid item xs={6}><h2>Cut off</h2></Grid>
+                            {/* <Grid item xs={6}><h2>Cut off</h2></Grid>
                             <Grid item xs={6}>
                                 <Input
                                     type="number"
@@ -438,7 +333,7 @@ export default ({ match }) => {
                                     onChange={handleChange}
                                     endAdornment={<InputAdornment position="end">px</InputAdornment>}
                                 />
-                            </Grid>
+                            </Grid> */}
                             <Grid item xs={12}>
                                 <Button variant="contained"
                                     color="default">
@@ -457,15 +352,6 @@ export default ({ match }) => {
                     box={box}
                 />
             </ContainerGrid>
-            <BBoxImg style={{zIndex:"2"}} id="boxContainer1"></BBoxImg>
-            <BBoxImg style={{zIndex:"1"}} id="boxContainer2">
-                <img src={tempImg} alt="#"></img>
-                {
-                        bbox.map((element) => (
-                            <div style={{ width: element[2] + "px", height: element[3] + "px", left: element[0] + "px", top: element[1] + "px" }}></div>
-                        ))
-                    }
-            </BBoxImg>
         </>
     );
 };

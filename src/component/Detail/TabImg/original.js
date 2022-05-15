@@ -1,27 +1,11 @@
 import React from 'react';
-import CommonPage from './common_page';
-import styled from "styled-components";
-import tempImg from '../../../resource/new_align_0001.jpg'
-
-
-const Img = styled.img`
-    width:50rem;
-    // height:37rem;
-    transition: transform .35s;
-`;
+import ImgElem from "./ImgElem/index"
 
 export default (props) => {
-    const setImg = () => {
-        return (
-            <Img id={"Original" + props.path} alt="#" src={tempImg}>
-            </Img>
-            )
-    }
-    return(
-        <CommonPage 
+
+    return (
+        <ImgElem
             path={props.path}
-            setImg={setImg}
-            tab={"Original"}
-            />
+        />
     )
 }

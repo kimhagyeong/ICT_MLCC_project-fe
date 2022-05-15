@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Resizable } from "re-resizable";
-import styled from "styled-components";
 import Login from './login.js'
 
 const style = {
@@ -15,7 +14,7 @@ const style = {
 export default (props) => {
     const [width, setWidth] = useState("99vw");
     const [height, setHeight] = useState("55vw");
-    
+
     return (
         <>
             <Resizable

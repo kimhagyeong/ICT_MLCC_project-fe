@@ -1,7 +1,6 @@
 import axios from "axios";
 
-// axios.defaults.baseURL = "http://.../api"  //배포
-axios.defaults.withCredentials = true;
+axios.defaults.baseURL = "http://127.0.0.1:8000"
 
 
 export default {
@@ -9,4 +8,12 @@ export default {
     tokenRefresh(data) {
       return axios.post("/user/...", data);
     },
+
+    signin(data) {
+      return axios.post("/signin", data);
+    },
+
+    signup(data) {
+      return axios.post("/signup", data);
+    }
 };

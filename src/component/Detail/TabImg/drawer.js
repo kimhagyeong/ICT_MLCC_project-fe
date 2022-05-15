@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
         marginRight: 0,
     },
     list: {
-        width: 700,
+        width: "30rem",
     },
     fullList: {
         width: 'auto',

@@ -263,14 +263,9 @@ export default (props) => {
         setType(event.target.value);
     };
 
-    // useEffect(() => {
-    //     var carousel = document.getElementById("carousel");
-    //     carousel.style.transform = "rotateY(" + deg + "deg)";
-    //   }, [deg]);
-
-    const imgList = (color, name, index, propsStep, setStep) => {
+    const imgList = (color, name, index, propsStep, setStep, label) => {
         return (
-            <ListDiv background={color} key={"List" + name} onClick={() => handleClickList(index, setStep)}>
+            <ListDiv background={color} key={"List" + label + index} onClick={() => handleClickList(index, setStep)}>
                 <Grid item xs={1}>
                     {propsStep === index ? <ArrowRightAltIcon /> : null}
                 </Grid>
@@ -368,7 +363,7 @@ export default (props) => {
                         enableMouseEvents
                     >
                         {normalSteps.map((step, index) => (
-                            <div key={"normalStepDiv" + step.imgPath}>
+                            <div key={"normalStepDiv" + index}>
                                 {Math.abs(normalStep - index) <= 2 ? (
                                     <img className={classes.img} src={step.imgPath} alt={step.label} key={"normalStepImg" + step.imgPath} />
                                 ) : null}
@@ -437,11 +432,11 @@ export default (props) => {
 
                 <ListContainer item xs={6} style={{ marginRight: "2.4rem" }}>
                     <h2>양품(Normal)</h2>
-                    <div>{normalSteps.map((Element, index) => (imgList(Element.color, Element.imgPath, index, normalStep, setNormalStep)))}</div>
+                    <div>{normalSteps.map((Element, index) => (imgList(Element.color, Element.imgPath, index, normalStep, setNormalStep, 'normal')))}</div>
                 </ListContainer>
                 <ListContainer item xs={6} style={{ marginLeft: "2.4rem" }}>
                     <h2>불량(Error)</h2>
-                    <div>{errorSteps.map((Element, index) => (imgList(Element.color, Element.imgPath, index, errorStep, setErrorStep)))}</div>
+                    <div>{errorSteps.map((Element, index) => (imgList(Element.color, Element.imgPath, index, errorStep, setErrorStep, 'error')))}</div>
                 </ListContainer>
 
                 <Grid item xs={4}></Grid>
@@ -528,7 +523,7 @@ export default (props) => {
                                     endAdornment={<InputAdornment position="end">%</InputAdornment>}
                                 />
                             </Grid>
-                            <Grid item xs={6}><h2>Cut off</h2></Grid>
+                            {/* <Grid item xs={6}><h2>Cut off</h2></Grid>
                             <Grid item xs={6}>
                                 <Input
                                     type="number"
@@ -540,7 +535,7 @@ export default (props) => {
                                     onChange={handleChange}
                                     endAdornment={<InputAdornment position="end">px</InputAdornment>}
                                 />
-                            </Grid>
+                            </Grid> */}
                         </form>
                     </Grid>
                 </CustomGrid>

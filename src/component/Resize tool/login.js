@@ -1,10 +1,8 @@
-import React, { useState } from "react";
-import { Resizable } from "re-resizable";
+import React from "react";
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import styled from "styled-components";
 import PropTypes from 'prop-types';
@@ -13,18 +11,13 @@ import { makeStyles, useTheme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import TextField from '@material-ui/core/TextField';
+import axios from "axios";
+import md5 from 'md5-hash'
 
-const style = {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    border: "solid 1px #ddd",
-    background: "#f0f0f0",
-    fontSize: "10rem"
-};
+
+const root_token = "c3cea142680c20f6dec5b853e1792a0c";
 
 const LoginButton = styled(Button)`
     position : absolute;
@@ -47,7 +40,7 @@ function TabPanel(props) {
         >
             {value === index && (
                 <Box p={3}>
-                    <Typography>{children}</Typography>
+                    <span>{children}</span>
                 </Box>
             )}
         </div>
@@ -95,7 +88,55 @@ export default (props) => {
     const handleClose = () => {
         setOpen(false);
     };
+    const handleSubmit = async () => {
+        try {
+            if (value === 0) {
+                var _id = document.getElementById('Login-Id').value;
+                var _password = document.getElementById('Login-Password').value
 
+                await axios.post("http://127.0.0.1:8000/signin/", {
+                    id: _id,
+                    password: _password
+                })
+
+                setOpen(false)
+            } else {
+                var _token = document.getElementById('SignUp-Token').value
+
+                if (md5(_token) === root_token) {
+
+                    var _id2 = document.getElementById('SignUp-ID').value
+                    var _password2 = document.getElementById('SignUp-Password').value
+                    var _nickname = document.getElementById('SignUp-Nickname').value
+                    var _name = document.getElementById('SignUp-Name').value
+                    var _email = document.getElementById('SignUp-Email').value
+
+                    await axios.post("http://127.0.0.1:8000/signup/", {
+                        id: _id2,
+                        password: _password2,
+                        nickname: _nickname,
+                        name: _name,
+                        email: _email
+                    })
+                    setOpen(false);
+                }
+                else {
+                    throw new Error("Token error")
+                }
+            }
+        } catch (error) {
+
+            if (error.message === "Token error") {
+                alert(error.message)
+            } else {
+                console.log(error.response.request.response)
+                alert(error.response.request.response)
+            }
+
+
+
+        }
+    };
     return (
         <>
             {props.children}
@@ -135,7 +176,7 @@ export default (props) => {
                         >
                             <TabPanel value={value} index={0} dir={theme.direction}>
                                 <TextField
-                                    id="outlined-search"
+                                    id="Login-Id"
                                     label="ID"
                                     type="search"
                                     variant="outlined"
@@ -143,7 +184,7 @@ export default (props) => {
                                     fullWidth />
                                 <br /><br />
                                 <TextField
-                                    id="outlined-password-input"
+                                    id="Login-Password"
                                     label="Password"
                                     type="password"
                                     autoComplete="current-password"
@@ -153,7 +194,55 @@ export default (props) => {
                                 />
                             </TabPanel>
                             <TabPanel value={value} index={1} dir={theme.direction}>
-                                근데 회원가입은 막아둔다고 하지 않았나?
+                                <TextField
+                                    id="SignUp-Token"
+                                    label="token"
+                                    type="password"
+                                    variant="outlined"
+                                    style={{ margin: 8 }}
+                                    fullWidth />
+                                <br />
+                                <TextField
+                                    id="SignUp-ID"
+                                    label="ID"
+                                    type="search"
+                                    variant="outlined"
+                                    style={{ margin: 8 }}
+                                    fullWidth />
+                                <br />
+                                <TextField
+                                    id="SignUp-Password"
+                                    label="Password"
+                                    type="password"
+                                    autoComplete="current-password"
+                                    variant="outlined"
+                                    style={{ margin: 8 }}
+                                    fullWidth
+                                />
+                                <br />
+                                <TextField
+                                    id="SignUp-Nickname"
+                                    label="nickname"
+                                    type="search"
+                                    variant="outlined"
+                                    style={{ margin: 8 }}
+                                    fullWidth />
+                                <br />
+                                <TextField
+                                    id="SignUp-Name"
+                                    label="name"
+                                    type="search"
+                                    variant="outlined"
+                                    style={{ margin: 8 }}
+                                    fullWidth />
+                                <br />
+                                <TextField
+                                    id="SignUp-Email"
+                                    label="email"
+                                    type="search"
+                                    variant="outlined"
+                                    style={{ margin: 8 }}
+                                    fullWidth />
                             </TabPanel>
                         </SwipeableViews>
                     </div>
@@ -162,7 +251,7 @@ export default (props) => {
                     <Button onClick={handleClose} color="primary">
                         닫기
                     </Button>
-                    <Button onClick={handleClose} color="primary" autoFocus>
+                    <Button onClick={handleSubmit} color="primary" autoFocus>
                         전송
                     </Button>
                 </DialogActions>

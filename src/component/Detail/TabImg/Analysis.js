@@ -1,29 +1,33 @@
 import React from 'react';
-import CommonPage from './common_page';
-import styled from "styled-components";
-import '../component.css';
+import ImgElem from "./ImgElem/index"
 
-const Img = styled.img`
-    width:50rem;
-    background-repeat: no-repeat;
-    background-position: center center; 
-`;
+const bbox = [
+    [
+        1195.08,
+        855.92,
+        109.73,
+        214.52
+    ],
+    [
+        96.74,
+        865.18,
+        103.54,
+        205.72
+    ],
+    [
+        2290.44,
+        852.98,
+        107.49,
+        213.8
+    ],
+]
 
 export default (props) => {
-   
-    const setImg = () => {
-        return (
-            
-                <Img id={"Analysis" + props.path} alt="#" src={props.imgSrc}>
-                </Img>
-           
-        )
-    }
+
     return (
-        <CommonPage
+        <ImgElem
             path={props.path}
-            setImg={setImg}
-            tab={"Analysis"}
-        />
+            bbox={bbox}
+        ></ImgElem>
     )
 }
