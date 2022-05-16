@@ -53,7 +53,7 @@ export default (props) => {
                             y={elem[1]}
                             width={elem[2]}
                             height={elem[3]}
-                            stroke="red"
+                            stroke={elem[4]}
                         />)
                     )}
                 </>

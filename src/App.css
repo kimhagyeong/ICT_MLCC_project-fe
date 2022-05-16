@@ -5,12 +5,17 @@
   -moz-user-select: -moz-none;
   -webkit-user-select: none;
   -khtml-user-select: none;
-  user-select:none;
+  user-select: none;
 }
 
-html{
+html {
   font-size: 19.20px;
 }
-div{
+
+div {
   box-sizing: border-box;
+}
+
+.MuiBackdrop-root {
+  background-color: rgba(0, 0, 0, 0.2) !important;
 }

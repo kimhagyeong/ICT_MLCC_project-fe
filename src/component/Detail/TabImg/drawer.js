@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
             easing: theme.transitions.easing.easeOut,
             duration: theme.transitions.duration.enteringScreen,
         }),
-        marginRight: drawerWidth,
+        marginRight: drawerWidth
     },
     title: {
         flexGrow: 1,
@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
         marginRight: 0,
     },
     list: {
-        width: "30rem",
+        width: 700,
     },
     fullList: {
         width: 'auto',
@@ -150,9 +150,14 @@ export default (props) => {
                         rows={rows}
                         columns={columns}
                         pageSize={13}
-                        // rowsPerPageOptions={[5,10,15]}
+                        onCellClick={(params, event) => {
+                            props.tabHandleChange(this, 2)
+                            console.log(params)
+                        }}
+
                         // checkboxSelection
                         disableSelectionOnClick
+                    // checkboxSelection={props.tabHandleChange(this,1)}
                     />
                 </div>
                 <div className={classes.drawerEnd}>

@@ -158,14 +158,14 @@ const ItemList = styled(Grid)`
             display:flex;
             width:100%;
             height:100%;
-            div:nth-child(1), div:nth-child(5), div:nth-child(7){
+            div:nth-child(1), div:nth-child(5){
                 height:2rem;
                 // padding:0.5rem;
                 h2{
                     text-align:left;
                 }
             }
-            div:nth-child(2), div:nth-child(4), div:nth-child(6), div:nth-child(8){
+            div:nth-child(2), div:nth-child(4){
                 height:2rem;
                 display:flex;
             }
@@ -174,7 +174,7 @@ const ItemList = styled(Grid)`
                 height:2rem;
                 text-align:center;
             }
-            div:nth-child(9){
+            div:nth-child(6){
                 display: flex;
                 align-items: center;
                 justify-content: flex-end;
@@ -350,6 +350,7 @@ export default ({ match }) => {
                     toggleDrawer={toggleDrawer}
                     open={open}
                     box={box}
+                    tabHandleChange={tabHandleChange}
                 />
             </ContainerGrid>
         </>
