@@ -6,6 +6,7 @@ export default (props) => {
     return (
         <ImgElem
             path={props.path}
+            img={props.img}
         />
     )
 }

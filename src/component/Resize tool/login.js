@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -13,9 +13,8 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import TextField from '@material-ui/core/TextField';
-import axios from "axios";
 import md5 from 'md5-hash'
-
+import api from "../../api"
 
 const root_token = "c3cea142680c20f6dec5b853e1792a0c";
 
@@ -72,6 +71,32 @@ export default (props) => {
     const classes = useStyles();
     const theme = useTheme();
     const [value, setValue] = React.useState(0);
+    const [isLogin, setIsLogin] = React.useState(false);
+
+    useEffect(() => {
+        if (getCookie("access") !== null) {
+            handleSettingOff()
+            if (getCookie("access") !== "access=") {
+                setIsLogin(true)
+                handleSettingOn()
+            }else{
+                handleSettingOff()
+            }
+        }
+    }, []);
+
+    const getCookie = (name) => {
+        // 변수를 선언한다.
+        const cookies = document.cookie.split(";");
+
+        // 쿠키를 추출한다.
+        for (var i in cookies) {
+            if (cookies[i].search(name) !== -1) {
+                return cookies[i];
+            }
+        }
+        return null;
+    };
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -85,35 +110,61 @@ export default (props) => {
         setOpen(true);
     };
 
+    const handleSettingOn = () =>{
+        var items = document.getElementsByClassName("admin-setting")
+        for (var i = 0; i < items.length; i++) {
+            items[i].style.display='flex'
+        }
+    }
+
+    const handleSettingOff = () =>{
+        var items = document.getElementsByClassName("admin-setting")
+        for (var i = 0; i < items.length; i++) {
+            items[i].style.display='none'
+        }
+    }
+
+    const handleLogout = () => {
+        document.cookie = "access=;"
+        alert("로그아웃 되었습니다.")
+        setIsLogin(false)
+
+        handleSettingOff()
+    }
+
     const handleClose = () => {
         setOpen(false);
     };
     const handleSubmit = async () => {
+        // console.log(this.axios.defaults.headers.common['Authorization'], 'server')
         try {
             if (value === 0) {
                 var _id = document.getElementById('Login-Id').value;
                 var _password = document.getElementById('Login-Password').value
 
-                await axios.post("http://127.0.0.1:8000/signin/", {
+                var response = await api.signin({
                     id: _id,
                     password: _password
                 })
-
+                document.cookie = "access=" + response.data['token'];
+                setIsLogin(true)
                 setOpen(false)
+                handleSettingOn()
             } else {
                 var _token = document.getElementById('SignUp-Token').value
 
                 if (md5(_token) === root_token) {
 
-                    var _id2 = document.getElementById('SignUp-ID').value
-                    var _password2 = document.getElementById('SignUp-Password').value
+                    _id = document.getElementById('SignUp-ID').value
+                    _password = document.getElementById('SignUp-Password').value
                     var _nickname = document.getElementById('SignUp-Nickname').value
                     var _name = document.getElementById('SignUp-Name').value
                     var _email = document.getElementById('SignUp-Email').value
 
-                    await axios.post("http://127.0.0.1:8000/signup/", {
-                        id: _id2,
-                        password: _password2,
+
+                    await api.signup({
+                        id: _id,
+                        password: _password,
                         nickname: _nickname,
                         name: _name,
                         email: _email
@@ -133,16 +184,20 @@ export default (props) => {
                 alert(error.response.request.response)
             }
 
-
-
         }
     };
     return (
         <>
             {props.children}
-            <LoginButton variant="contained" color="primary" onClick={handleClickOpen}>
-                Login/Out
-            </LoginButton>
+            {isLogin ?
+                <LoginButton variant="contained" color="primary" onClick={handleLogout}>
+                    Logout
+                </LoginButton> :
+                <LoginButton variant="contained" color="primary" onClick={handleClickOpen}>
+                    Login
+                </LoginButton>
+            }
+
             <Dialog
                 open={open}
                 onClose={handleClose}

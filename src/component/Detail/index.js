@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from "styled-components";
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -13,6 +13,7 @@ import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Drawer from './TabImg/drawer'
 import Button from '@material-ui/core/Button';
+import api from '../../api'
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -108,26 +109,6 @@ const ContainerGrid = styled(Grid)`
     background-color:#f0f0f0;
     z-index:3;
 `
-const boxList = [
-    {
-        color: '#3dc000',
-        marginRatio: '87.5%',
-        imgPath:
-            'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250&q=80',
-    },
-    {
-        color: '#3dc000',
-        marginRatio: '88.5%',
-        imgPath:
-            'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250&q=80',
-    },
-    {
-        color: '#3dc000',
-        marginRatio: '87.5%',
-        imgPath:
-            'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250&q=80',
-    }
-];
 
 const ImgListDiv = styled.div`
     width:100%;
@@ -186,6 +167,52 @@ const ItemList = styled(Grid)`
     }
 `;
 
+const defaultResponse = {
+    "original_img": "http://127.0.0.1:8000/media/data/1/new_normal_0152.jpg",
+    "segmentation_image": "http://127.0.0.1:8000/media/data/1/new_normal_0152.jpg",
+    "Box": {
+        "1-1": {
+            "box_center_x": 12,
+            "box_center_y": 34,
+            "box_width": 20,
+            "box_height": 10
+        },
+        "1-2": {
+            "box_center_x": 12,
+            "box_center_y": 34,
+            "box_width": 20,
+            "box_height": 10
+        }
+    },
+    "Ratio": {
+        "1-1": 84.1234,
+        "1-2": 78.5456
+    }
+}
+
+const defaultAnalysicBox = {
+    "box_center_x": 12,
+    "box_center_y": 34,
+    "box_width": 20,
+    "box_height": 10
+}
+const defaultRows = [
+    { id: 1, threshold: 48.000, real: 38.000, ratio: 79.167 },
+    { id: 2, threshold: 48.000, real: 38.000, ratio: 82.609 },
+    { id: 3, threshold: 48.000, real: 38.000, ratio: 84.444 },
+    { id: 4, threshold: 40.000, real: 38.000, ratio: 95.000 },
+    { id: 5, threshold: 40.000, real: 38.000, ratio: 95.000 },
+    { id: 6, threshold: 38.000, real: 38.000, ratio: 100.000 },
+    { id: 7, threshold: 38.000, real: 38.000, ratio: 100.000 },
+    { id: 8, threshold: 38.000, real: 38.000, ratio: 100.000 },
+    { id: 9, threshold: 38.000, real: 38.000, ratio: 100.000 },
+    { id: 10, threshold: 38.000, real: 38.000, ratio: 100.000 },
+    { id: "Min", threshold: 48.000, real: 38.000, ratio: 79.000 },
+    { id: "Max", threshold: 48.000, real: 38.000, ratio: 100.000 },
+    { id: "Avg", threshold: 48.000, real: 38.000, ratio: 93.500 },
+];
+
+
 export default ({ match }) => {
     const classes = useStyles();
     const [value, setValue] = React.useState(0);
@@ -196,10 +223,138 @@ export default ({ match }) => {
     const [cutOff, setCutOff] = React.useState(5);
     const [open, setOpen] = React.useState(false);
     const [box, setBox] = React.useState();
+    const [analysisBoxList, setanalysisBoxList] = React.useState([]);
+    const [boxList, setBoxList] = React.useState([]);
 
-    const handleClickOpen = (elem) => {
-        setOpen(true);
+    const [originImg, setOriginImg] = React.useState(null);
+    const [segmentationImg, setSegmentationImg] = React.useState(null);
+    const [rows, setRows] = React.useState([]);
+    
+    useEffect(() => {
+        componentDidMountApi()
+    });
+
+    const componentDidMountApi = async () => {
+        try {
+            var response = await api.getDetail(match.params.img);
+            setOriginImg(response.data['original_img'])
+            if (response.data['segmentation_image']) {
+                setSegmentationImg(response.data['segmentation_image'])
+            } else {
+                setSegmentationImg(response.data['original_img'])
+            }
+            let index = [];
+            for (let x in response.data['Box']) {
+                index.push(x);
+            }
+            let b = []
+            for (let value of index) {
+                var ele = {}
+                ele.name = value;
+                ele.ratio = response.data['Ratio'][value]
+                ele.bbox = response.data['Box'][value]
+                ele.b_color = 'red'
+                b.push(ele)
+            };
+            setBoxList(b)
+            setanalysisBoxList(b)
+        } catch (e) {
+            console.log(e)
+            setOriginImg(defaultResponse['original_img'])
+            setSegmentationImg(defaultResponse['segmentation_image'])
+            let index = [];
+            for (let x in defaultResponse['Box']) {
+                index.push(x);
+            }
+            let b = []
+            for (let value of index) {
+                
+                var _ele = {}
+                _ele.name = value;
+                _ele.ratio = defaultResponse['Ratio'][value]
+                _ele.bbox = defaultResponse['Box'][value]
+                _ele.b_color = 'red'
+                b.push(_ele)
+            };
+            setBoxList(b)
+            setanalysisBoxList(b)
+        }
+    }
+    const getDetailApi = async () => {
+        try {
+            var response = await api.getDetailWithSetting(match.params.img, threshold);
+            setOriginImg(response.data['original_img'])
+
+            let index = [];
+            for (let x in response.data['Box']) {
+                index.push(x);
+            }
+            let b = []
+            for (let value of index) {
+                var ele = {}
+                ele.name = value;
+                ele.ratio = response.data['Ratio'][value]
+                ele.bbox = response.data['Box'][value]
+                ele.b_color = 'red'
+                b.push(ele)
+            };
+            setBoxList(b)
+        } catch (e) {
+            console.log(e)
+            setOriginImg(defaultResponse['original_img'])
+            let index = [];
+            for (let x in defaultResponse['Box']) {
+                index.push(x);
+            }
+            let b = []
+            for (let value of index) {
+                var _ele = {}
+                _ele.name = value;
+                _ele.ratio = defaultResponse['Ratio'][value]
+                _ele.bbox = defaultResponse['Box'][value]
+                _ele.b_color = 'red'
+                b.push(_ele)
+            };
+            setBoxList(b)
+        }
+    }
+    const getApiForAnalysis = async(id)=>{
+        try{
+            var response = await api.getDetailForAnalysis(match.params.img,box,id)
+            let b_list = [...boxList]
+            var ele = {}
+            ele.bbox = response.data
+            ele.b_color = 'yellow'
+            b_list.push(ele)
+            setanalysisBoxList(b_list)
+        }catch{
+            var b_list =[...boxList]
+            var _ele ={}
+            _ele.bbox = defaultAnalysicBox
+            _ele.b_color = 'yellow'
+            b_list.push(_ele)
+            setanalysisBoxList(b_list)
+        }
+    }
+
+    const getApiForDrawer = async(_box)=>{
+        try{
+            var response = await api.getDetailForDrawer(match.params.img, _box)
+            
+            if(Object.keys(response.data).length === 0){
+                setRows(defaultRows)
+            }else{
+                setRows(response.data)
+            }
+        }catch{
+            setRows(defaultRows)
+        }
+    }
+
+    const handleClickOpen = async(elem) => {
         setBox(elem);
+        await getApiForDrawer(elem)
+        setOpen(true);
     };
     const handleClose = () => {
         setOpen(false);
@@ -214,6 +369,10 @@ export default ({ match }) => {
 
     const tabHandleChange = (event, newValue) => {
         setValue(newValue);
+    };
+    const tabHandleChangeWithId = (event, newValue, id) => {
+        setValue(newValue);
+        getApiForAnalysis(id);
     };
     const handleChange = (event) => {
         // input value 가져오기
@@ -251,7 +410,10 @@ export default ({ match }) => {
                 console.log("error!");
         }
     };
-    const imgList = (elem, color, ratio, path) => {
+    const handleSearch = () => {
+        getDetailApi()
+    }
+    const imgList = (elem, color, ratio) => {
         return (
             <ImgListDiv key={"box" + elem} background={color} onClick={() => handleClickOpen(elem)}>
                 <span>&nbsp;Box {elem}&nbsp;</span> <br />
@@ -259,7 +421,17 @@ export default ({ match }) => {
             </ImgListDiv>
         )
     }
-
+    const setWarningColor = (ratio) => {
+        if (ratio < fromRatio) {
+            return '#ff3300'
+        }
+        if (ratio >= fromRatio && ratio <= toRatio) {
+            return '#ff7300'
+        }
+        if (ratio > toRatio) {
+            return '#3dc000'
+        }
+    }
     return (
         <>
             <ContainerGrid container
@@ -275,26 +447,27 @@ export default ({ match }) => {
                             <AntTab label="Analysis" {...a11yProps(2)} />
                         </AntTabs>
                         <TabPanel value={value} index={0}>
-                            <OriginalTab path={match.params.img} />
+                            <OriginalTab path={match.params.img} img={originImg} />
                         </TabPanel>
                         <TabPanel value={value} index={1}>
-                            <BoxTab path={match.params.img} />
+                            <BoxTab path={match.params.img} img={segmentationImg} bbox={boxList} />
                         </TabPanel>
                         <TabPanel value={value} index={2}>
-                            <AnalysisTab path={match.params.img} />
+                            <AnalysisTab path={match.params.img} img={segmentationImg} bbox={analysisBoxList} />
                         </TabPanel>
                     </div>
                 </Grid>
 
                 <ItemList item xs={3}>
                     <div>
-                        {boxList.map((Element, index) => (imgList(index + 1, Element.color, Element.marginRatio, Element.imgPath)))}
+                        {boxList.map((Element) => (imgList(Element.name, setWarningColor(Element.ratio), Element.ratio)))}
                     </div>
                     <div>
                         <form name="setting">
                             <Grid item xs={4}><h2>Warning ratio</h2></Grid>
                             <Grid item xs={3}>
                                 <Input
+                                    className="admin-setting"
                                     type="number"
                                     name="fromRatio"
                                     defaultValue={fromRatio}
@@ -307,6 +480,7 @@ export default ({ match }) => {
                             </Grid>
                             <Grid item xs={3}>
                                 <Input
+                                    className="admin-setting"
                                     type="number"
                                     name="toRatio"
                                     defaultValue={toRatio}
@@ -317,6 +491,7 @@ export default ({ match }) => {
                             <Grid item xs={6}><h2>Margin threshold</h2></Grid>
                             <Grid item xs={6}>
                                 <Input
+                                    className="admin-setting"
                                     type="number"
                                     name="threshold"
                                     defaultValue={threshold}
@@ -335,8 +510,12 @@ export default ({ match }) => {
                                 />
                             </Grid> */}
                             <Grid item xs={12}>
-                                <Button variant="contained"
-                                    color="default">
+                                <Button
+                                    className="admin-setting"
+                                    variant="contained"
+                                    color="default"
+                                    onClick={handleSearch}
+                                >
                                     Search
                                 </Button>
                             </Grid>
@@ -349,8 +528,10 @@ export default ({ match }) => {
                     handleDrawerClose={handleClose}
                     toggleDrawer={toggleDrawer}
                     open={open}
-                    box={box}
+                    rows={rows}
+                    // box={box}
                     tabHandleChange={tabHandleChange}
+                    tabHandleChangeWithId={tabHandleChangeWithId}
                 />
             </ContainerGrid>
         </>

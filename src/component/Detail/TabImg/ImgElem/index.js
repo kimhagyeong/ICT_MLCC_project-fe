@@ -1,9 +1,7 @@
 import React from 'react';
 import styled from "styled-components";
 import { Rect } from "react-konva";
-
 import ImgElemContainer from "./img_elem_container"
-import Img from "../../../../resource/new_align_0001.jpg"
 import IconButton from '@material-ui/core/IconButton';
 import BuildIcon from '@material-ui/icons/Build';
 
@@ -49,11 +47,11 @@ export default (props) => {
                     {props.bbox.map((elem, key) => (
                         <Rect
                             key={key}
-                            x={elem[0]}
-                            y={elem[1]}
-                            width={elem[2]}
-                            height={elem[3]}
-                            stroke={elem[4]}
+                            x={elem.bbox['box_center_x']}
+                            y={elem.bbox['box_center_y']}
+                            width={elem.bbox['box_width']}
+                            height={elem.bbox['box_height']}
+                            stroke={elem.b_color}
                         />)
                     )}
                 </>
@@ -66,7 +64,7 @@ export default (props) => {
             <Div>
                 <ImgElemContainer
                     rect={rect}
-                    img={Img}
+                    img={props.img}
                 />
             </Div>
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import Grid from '@material-ui/core/Grid';
 import AlbumIcon from '@material-ui/icons/Album';
@@ -16,8 +16,8 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import ArrowRightAltIcon from '@material-ui/icons/ArrowRightAlt';
 import Input from '@material-ui/core/Input';
-import NormalImg from '../../resource/picture1.jpg';
-import ErrorImg from '../../resource/picture_fail.jpg';
+import api from "../../api"
+import useScheduled from 'use-scheduled';
 
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
@@ -40,6 +40,7 @@ const MonitoringStepper = styled(Grid)`
         margin: auto;
     }
     img{
+        cursor:pointer;
         width: 45rem;
         height:21rem;
         margin:auto;
@@ -174,72 +175,26 @@ const SearchGrid = styled(Grid)`
     }
 `
 
-const errorSteps = [
-    {
-        color: '#ff7300',
-        imgPath: ErrorImg,
-    },
-    {
-        color: '#ff7300',
-        imgPath: NormalImg,
-    },
-    {
-        color: '#ff3300',
-        imgPath:
-            'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250&q=80',
-    }
-];
-
-
-const normalSteps = [
-    {
-        color: '#3dc000',
-        imgPath: NormalImg,
-    },
-    {
-        color: '#3dc000',
-        imgPath: ErrorImg,
-    },
-    {
-        color: '#ff7300',
-        imgPath:
-            'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250&q=80',
-    },
-    {
-        color: '#3dc000',
-        imgPath:
-            'https://images.unsplash.com/photo-1518732714860-b62714ce0c59?auto=format&fit=crop&w=400&h=250&q=60',
-    },
-    {
-        color: '#3dc000',
-        imgPath:
-            'https://images.unsplash.com/photo-1512341689857-198e7e2f3ca8?auto=format&fit=crop&w=400&h=250&q=60',
-    },
-    {
-        color: '#3dc000',
-        imgPath: NormalImg,
-    },
-    {
-        color: '#3dc000',
-        imgPath: ErrorImg,
-    },
-    {
-        color: '#ff7300',
-        imgPath:
-            'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250&q=80',
-    },
-    {
-        color: '#3dc000',
-        imgPath:
-            'https://images.unsplash.com/photo-1518732714860-b62714ce0c59?auto=format&fit=crop&w=400&h=250&q=60',
-    },
-    {
-        color: '#3dc000',
-        imgPath:
-            'https://images.unsplash.com/photo-1512341689857-198e7e2f3ca8?auto=format&fit=crop&w=400&h=250&q=60',
-    },
-];
-
+const sampleImgList = {
+    "Normal": [
+        {
+            "name": "1",
+            "original_image": "http://127.0.0.1:8000/media/data/1/new_normal_0152.jpg",
+            "segmentation_image": "http://127.0.0.1:8000/media/data/1/new_normal_0152_seg.png",
+            "margin_ratio": 86.2345,
+            "created_date": "2022-06-12"
+        }
+    ],
+    "Error": [
+        {
+            "name": "2",
+            "original_image": "http://127.0.0.1:8000/media/data/2/new_align_0361.jpg",
+            "segmentation_image": "http://127.0.0.1:8000/media/data/2/new_normal_0152_seg.png",
+            "margin_ratio": 78.546,
+            "created_date": "2022-06-12"
+        }
+    ]
+}
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -258,14 +213,70 @@ const useStyles = makeStyles((theme) => ({
 
 export default (props) => {
     const [type, setType] = React.useState('Default');
+    const [normalList, setNormalList] = React.useState([]);
+    const [errorList, setErrorList] = React.useState([]);
+
+
+    // useScheduled(
+    //     React.useCallback(
+    //       () => searchApi(document.getElementById('start-date').value.replaceAll('-','.'),document.getElementById('end-date').value.replaceAll('-','.'),threshold)
+    //     ),
+    //     600000
+    //   );
+  
+    useEffect(() => {
+        componentDidMountApi()
+    });
+
+    const componentDidMountApi = async()=>{
+        try{
+            var response = await api.getMainList();
+            setNormalList(response.data['Normal'])
+            setErrorList(response.data['Error'])
+            setMaxNormalSteps(response.data['Normal'].length)
+            setMaxErrorSteps(response.data['Error'].length)
+        }catch(e){
+            setNormalList(sampleImgList['Normal'])
+            setErrorList(sampleImgList['Error'])
+            setMaxNormalSteps(sampleImgList['Normal'].length)
+            setMaxErrorSteps(sampleImgList['Error'].length)
+        }
+    }
+
+    const searchApi = async(startDate,endDate,threshold)=>{
+        try{
+            var response = await api.getMainListWithSetting(startDate+'~'+endDate,threshold);
+            setNormalList(response.data['Normal'])
+            setErrorList(response.data['Error'])
+            setMaxNormalSteps(response.data['Normal'].length)
+            setMaxErrorSteps(response.data['Error'].length)
+        }catch(e){
+            setNormalList(sampleImgList['Normal'])
+            setErrorList(sampleImgList['Error'])
+            setMaxNormalSteps(sampleImgList['Normal'].length)
+            setMaxErrorSteps(sampleImgList['Error'].length)
+        }
+    }
 
     const typeHandleChange = (event) => {
         setType(event.target.value);
     };
 
-    const imgList = (color, name, index, propsStep, setStep, label) => {
+    const setWarningColor=(ratio)=>{
+        if(ratio<fromRatio){
+            return '#ff3300'
+        }
+        if(ratio>=fromRatio && ratio<=toRatio){
+            return '#ff7300'
+        }
+        if(ratio>toRatio){
+            return '#3dc000'
+        }
+    }
+
+    const imgList = (ratio, name, index, propsStep, setStep, label) => {
         return (
-            <ListDiv background={color} key={"List" + label + index} onClick={() => handleClickList(index, setStep)}>
+            <ListDiv background={setWarningColor(ratio)} key={"List" + label + index} onClick={() => handleClickList(index, setStep)}>
                 <Grid item xs={1}>
                     {propsStep === index ? <ArrowRightAltIcon /> : null}
                 </Grid>
@@ -283,12 +294,11 @@ export default (props) => {
     const [normalStep, setNormalStep] = React.useState(0);
     const [errorStep, setErrorStep] = React.useState(0);
 
-    const maxNormalSteps = normalSteps.length;
-    const maxErrorSteps = errorSteps.length;
+    const [maxNormalSteps, setMaxNormalSteps] = React.useState(0);
+    const [maxErrorSteps, setMaxErrorSteps] = React.useState(0);
     const [fromRatio, setFromRatio] = React.useState(83);
     const [toRatio, setToRatio] = React.useState(87);
     const [threshold, setThreshold] = React.useState(85);
-    const [cutOff, setCutOff] = React.useState(5);
 
     const handleClickList = (index, setStep) => {
         setStep(index);
@@ -336,18 +346,14 @@ export default (props) => {
                     document.querySelector('input[name="threshold"]').value = threshold;
                 }
                 break;
-            case "cutOff":
-                if (value > 0) {
-                    setCutOff(value);
-                } else {
-                    document.querySelector('input[name="cutOff"]').value = cutOff;
-                }
-                break;
             default:
                 console.log("error!");
         }
     };
 
+    const handleSearch =()=>{
+        searchApi(document.getElementById('start-date').value.replaceAll('-','.'),document.getElementById('end-date').value.replaceAll('-','.'),threshold)
+    }
     return (
         <>
             <ContainerGrid container
@@ -362,10 +368,10 @@ export default (props) => {
                         // onChangeIndex={handleStepChange}
                         enableMouseEvents
                     >
-                        {normalSteps.map((step, index) => (
+                        {normalList.map((step, index) => (
                             <div key={"normalStepDiv" + index}>
                                 {Math.abs(normalStep - index) <= 2 ? (
-                                    <img className={classes.img} src={step.imgPath} alt={step.label} key={"normalStepImg" + step.imgPath} />
+                                    <img className={classes.img} src={step.original_image} alt={step.label} key={"normalStepImg" + step.name} onClick={()=>window.location.href = '/detail/'+step.name}/>
                                 ) : null}
                             </div>
                         ))}
@@ -397,10 +403,10 @@ export default (props) => {
                         // onChangeIndex={handleStepChange}
                         enableMouseEvents
                     >
-                        {errorSteps.map((step, index) => (
-                            <div key={"errorStepDiv" + step.imgPath}>
+                        {errorList.map((step, index) => (
+                            <div key={"errorStepDiv" + step.original_image}>
                                 {Math.abs(errorStep - index) <= 2 ? (
-                                    <img className={classes.img} src={step.imgPath} alt={step.label} key={"errorStepImg" + index} />
+                                    <img className={classes.img} src={step.original_image} alt={step.label} key={"errorStepImg" + step.name} />
                                 ) : null}
                             </div>
                         ))}
@@ -432,11 +438,11 @@ export default (props) => {
 
                 <ListContainer item xs={6} style={{ marginRight: "2.4rem" }}>
                     <h2>양품(Normal)</h2>
-                    <div>{normalSteps.map((Element, index) => (imgList(Element.color, Element.imgPath, index, normalStep, setNormalStep, 'normal')))}</div>
+                    <div>{normalList.map((Element,index) => (imgList(Element.margin_ratio, Element.original_image, index, normalStep, setNormalStep, 'normal')))}</div>
                 </ListContainer>
                 <ListContainer item xs={6} style={{ marginLeft: "2.4rem" }}>
                     <h2>불량(Error)</h2>
-                    <div>{errorSteps.map((Element, index) => (imgList(Element.color, Element.imgPath, index, errorStep, setErrorStep, 'error')))}</div>
+                    <div>{errorList.map((Element,index) => (imgList(Element.margin_ratio, Element.original_image, index, errorStep, setErrorStep, 'error')))}</div>
                 </ListContainer>
 
                 <Grid item xs={4}></Grid>
@@ -445,6 +451,7 @@ export default (props) => {
                         <h2>Monitoring Type</h2>
                         <FormControl>
                             <Select
+                                className="admin-setting"
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
                                 value={type}
@@ -457,7 +464,8 @@ export default (props) => {
                             {type === "Default" ? null :
                                 <>
                                     <TextField
-                                        id="date"
+                                        className="admin-setting"
+                                        id="start-date"
                                         label="Start Date"
                                         type="date"
                                         InputLabelProps={{
@@ -466,7 +474,8 @@ export default (props) => {
                                     />
                                     &nbsp; ~ &nbsp;
                                     <TextField
-                                        id="date"
+                                        className="admin-setting"
+                                        id="end-date"
                                         label="End Date"
                                         type="date"
                                         InputLabelProps={{
@@ -485,6 +494,7 @@ export default (props) => {
                             <Grid item xs={4}><h2>Warning ratio</h2></Grid>
                             <Grid item xs={3}>
                                 <Input
+                                    className="admin-setting"
                                     type="number"
                                     name="fromRatio"
                                     // InputLabelProps={{
@@ -500,6 +510,7 @@ export default (props) => {
                             </Grid>
                             <Grid item xs={3}>
                                 <Input
+                                    className="admin-setting"
                                     type="number"
                                     name="toRatio"
                                     // InputLabelProps={{
@@ -513,37 +524,24 @@ export default (props) => {
                             <Grid item xs={6}><h2>Margin threshold</h2></Grid>
                             <Grid item xs={6}>
                                 <Input
+                                    className="admin-setting"
                                     type="number"
                                     name="threshold"
-                                    // InputLabelProps={{
-                                    //     shrink: true,
-                                    // }}
                                     defaultValue={threshold}
                                     onChange={handleChange}
                                     endAdornment={<InputAdornment position="end">%</InputAdornment>}
                                 />
                             </Grid>
-                            {/* <Grid item xs={6}><h2>Cut off</h2></Grid>
-                            <Grid item xs={6}>
-                                <Input
-                                    type="number"
-                                    name="cutOff"
-                                    // InputLabelProps={{
-                                    //     shrink: true,
-                                    // }}
-                                    defaultValue={cutOff}
-                                    onChange={handleChange}
-                                    endAdornment={<InputAdornment position="end">px</InputAdornment>}
-                                />
-                            </Grid> */}
                         </form>
                     </Grid>
                 </CustomGrid>
 
                 <SearchGrid item xs={1}>
                     <Button
+                        className="admin-setting"
                         variant="contained"
                         color="default"
+                        onClick={handleSearch}
                     >
                         Search
                     </Button>

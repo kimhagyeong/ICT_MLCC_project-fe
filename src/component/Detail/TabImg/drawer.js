@@ -107,22 +107,6 @@ const columns = [
     }
 ];
 
-const rows = [
-    { id: 1, threshold: 48.000, real: 38.000, ratio: 79.167 },
-    { id: 2, threshold: 48.000, real: 38.000, ratio: 82.609 },
-    { id: 3, threshold: 48.000, real: 38.000, ratio: 84.444 },
-    { id: 4, threshold: 40.000, real: 38.000, ratio: 95.000 },
-    { id: 5, threshold: 40.000, real: 38.000, ratio: 95.000 },
-    { id: 6, threshold: 38.000, real: 38.000, ratio: 100.000 },
-    { id: 7, threshold: 38.000, real: 38.000, ratio: 100.000 },
-    { id: 8, threshold: 38.000, real: 38.000, ratio: 100.000 },
-    { id: 9, threshold: 38.000, real: 38.000, ratio: 100.000 },
-    { id: 10, threshold: 38.000, real: 38.000, ratio: 100.000 },
-    { id: "Min", threshold: 48.000, real: 38.000, ratio: 79.000 },
-    { id: "Max", threshold: 48.000, real: 38.000, ratio: 100.000 },
-    { id: "Avg", threshold: 48.000, real: 38.000, ratio: 93.500 },
-];
-
 export default (props) => {
     const classes = useStyles();
     const theme = useTheme();
@@ -147,12 +131,11 @@ export default (props) => {
                 <Divider />
                 <div style={{ height: "35rem" }}>
                     <DataGrid
-                        rows={rows}
+                        rows={props.rows}
                         columns={columns}
                         pageSize={13}
                         onCellClick={(params, event) => {
-                            props.tabHandleChange(this, 2)
-                            console.log(params)
+                            props.tabHandleChangeWithId(this, 2,params.id)
                         }}
 
                         // checkboxSelection
