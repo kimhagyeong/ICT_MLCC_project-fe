@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import Grid from '@material-ui/core/Grid';
 import AlbumIcon from '@material-ui/icons/Album';
@@ -17,7 +17,10 @@ import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import ArrowRightAltIcon from '@material-ui/icons/ArrowRightAlt';
 import Input from '@material-ui/core/Input';
 import api from "../../api"
-import useScheduled from 'use-scheduled';
+import Img from '../../resource/new_align_0001.jpg'
+import Img2 from '../../resource/new_align_0003.jpg'
+import Img3 from '../../resource/new_align_0005.jpg'
+import Img4 from '../../resource/new_align_0006.jpg'
 
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
@@ -179,18 +182,32 @@ const sampleImgList = {
     "Normal": [
         {
             "name": "1",
-            "original_image": "http://127.0.0.1:8000/media/data/1/new_normal_0152.jpg",
-            "segmentation_image": "http://127.0.0.1:8000/media/data/1/new_normal_0152_seg.png",
+            "original_img": Img,
+            "segmentation_img": Img2,
             "margin_ratio": 86.2345,
+            "created_date": "2022-06-12"
+        },
+        {
+            "name": "2",
+            "original_img": Img3,
+            "segmentation_img": Img4,
+            "margin_ratio": 78.546,
             "created_date": "2022-06-12"
         }
     ],
     "Error": [
         {
-            "name": "2",
-            "original_image": "http://127.0.0.1:8000/media/data/2/new_align_0361.jpg",
-            "segmentation_image": "http://127.0.0.1:8000/media/data/2/new_normal_0152_seg.png",
+            "name": "3",
+            "original_img": Img3,
+            "segmentation_img": Img4,
             "margin_ratio": 78.546,
+            "created_date": "2022-06-12"
+        },
+        {
+            "name": "4",
+            "original_img": Img,
+            "segmentation_img": Img2,
+            "margin_ratio": 86.2345,
             "created_date": "2022-06-12"
         }
     ]
@@ -216,26 +233,73 @@ export default (props) => {
     const [normalList, setNormalList] = React.useState([]);
     const [errorList, setErrorList] = React.useState([]);
 
+    const classes = useStyles();
+    const theme = useTheme();
+    const [normalStep, setNormalStep] = React.useState(0);
+    const [errorStep, setErrorStep] = React.useState(0);
 
-    // useScheduled(
-    //     React.useCallback(
-    //       () => searchApi(document.getElementById('start-date').value.replaceAll('-','.'),document.getElementById('end-date').value.replaceAll('-','.'),threshold)
-    //     ),
-    //     600000
-    //   );
-  
+    const [maxNormalSteps, setMaxNormalSteps] = React.useState(0);
+    const [maxErrorSteps, setMaxErrorSteps] = React.useState(0);
+    const [fromRatio, setFromRatio] = React.useState(83);
+    const [toRatio, setToRatio] = React.useState(87);
+    const [threshold, setThreshold] = React.useState(85);
+
+    function useInterval(callback, delay) {
+        const savedCallback = useRef();
+
+        // Remember the latest callback.
+        useEffect(() => {
+            savedCallback.current = callback;
+        }, [callback]);
+
+        // Set up the interval.
+        useEffect(() => {
+            function tick() {
+                savedCallback.current();
+            }
+            if (delay !== null) {
+                let id = setInterval(tick, delay);
+                return () => clearInterval(id);
+            }
+        }, [delay]);
+    }
+
+    useInterval(() => {
+        // Your custom logic here
+        searchApi()
+    }, 600000);
+
     useEffect(() => {
         componentDidMountApi()
-    });
+        return () => {
+            componentDidMountApi()
+        };
+    }, []);
 
-    const componentDidMountApi = async()=>{
-        try{
+    const searchApi = async () => {
+        try {
+            var response = await api.getMainListWithSetting(document.getElementById('start-date').value.replaceAll('-', '.') + '~' + document.getElementById('end-date').value.replaceAll('-', '.'), threshold);
+            setNormalList(response.data['Normal'])
+            setErrorList(response.data['Error'])
+            setMaxNormalSteps(response.data['Normal'].length)
+            setMaxErrorSteps(response.data['Error'].length)
+        } catch (e) {
+            console.log(e)
+            setNormalList(sampleImgList['Normal'])
+            setErrorList(sampleImgList['Error'])
+            setMaxNormalSteps(sampleImgList['Normal'].length)
+            setMaxErrorSteps(sampleImgList['Error'].length)
+        }
+    }
+    const componentDidMountApi = async () => {
+        console.log("componentDidMountApi")
+        try {
             var response = await api.getMainList();
             setNormalList(response.data['Normal'])
             setErrorList(response.data['Error'])
             setMaxNormalSteps(response.data['Normal'].length)
             setMaxErrorSteps(response.data['Error'].length)
-        }catch(e){
+        } catch (e) {
             setNormalList(sampleImgList['Normal'])
             setErrorList(sampleImgList['Error'])
             setMaxNormalSteps(sampleImgList['Normal'].length)
@@ -243,33 +307,19 @@ export default (props) => {
         }
     }
 
-    const searchApi = async(startDate,endDate,threshold)=>{
-        try{
-            var response = await api.getMainListWithSetting(startDate+'~'+endDate,threshold);
-            setNormalList(response.data['Normal'])
-            setErrorList(response.data['Error'])
-            setMaxNormalSteps(response.data['Normal'].length)
-            setMaxErrorSteps(response.data['Error'].length)
-        }catch(e){
-            setNormalList(sampleImgList['Normal'])
-            setErrorList(sampleImgList['Error'])
-            setMaxNormalSteps(sampleImgList['Normal'].length)
-            setMaxErrorSteps(sampleImgList['Error'].length)
-        }
-    }
 
     const typeHandleChange = (event) => {
         setType(event.target.value);
     };
 
-    const setWarningColor=(ratio)=>{
-        if(ratio<fromRatio){
+    const setWarningColor = (ratio) => {
+        if (ratio < fromRatio) {
             return '#ff3300'
         }
-        if(ratio>=fromRatio && ratio<=toRatio){
+        if (ratio >= fromRatio && ratio <= toRatio) {
             return '#ff7300'
         }
-        if(ratio>toRatio){
+        if (ratio > toRatio) {
             return '#3dc000'
         }
     }
@@ -289,16 +339,6 @@ export default (props) => {
             </ListDiv>
         )
     };
-    const classes = useStyles();
-    const theme = useTheme();
-    const [normalStep, setNormalStep] = React.useState(0);
-    const [errorStep, setErrorStep] = React.useState(0);
-
-    const [maxNormalSteps, setMaxNormalSteps] = React.useState(0);
-    const [maxErrorSteps, setMaxErrorSteps] = React.useState(0);
-    const [fromRatio, setFromRatio] = React.useState(83);
-    const [toRatio, setToRatio] = React.useState(87);
-    const [threshold, setThreshold] = React.useState(85);
 
     const handleClickList = (index, setStep) => {
         setStep(index);
@@ -351,8 +391,8 @@ export default (props) => {
         }
     };
 
-    const handleSearch =()=>{
-        searchApi(document.getElementById('start-date').value.replaceAll('-','.'),document.getElementById('end-date').value.replaceAll('-','.'),threshold)
+    const handleSearch = () => {
+        searchApi()
     }
     return (
         <>
@@ -371,7 +411,7 @@ export default (props) => {
                         {normalList.map((step, index) => (
                             <div key={"normalStepDiv" + index}>
                                 {Math.abs(normalStep - index) <= 2 ? (
-                                    <img className={classes.img} src={step.original_image} alt={step.label} key={"normalStepImg" + step.name} onClick={()=>window.location.href = '/detail/'+step.name}/>
+                                    <img className={classes.img} src={step.original_img} alt={step.label} key={"normalStepImg" + step.name} onClick={() => window.location.href = '/detail/' + step.name} />
                                 ) : null}
                             </div>
                         ))}
@@ -404,9 +444,9 @@ export default (props) => {
                         enableMouseEvents
                     >
                         {errorList.map((step, index) => (
-                            <div key={"errorStepDiv" + step.original_image}>
+                            <div key={"errorStepDiv" + step.original_img}>
                                 {Math.abs(errorStep - index) <= 2 ? (
-                                    <img className={classes.img} src={step.original_image} alt={step.label} key={"errorStepImg" + step.name} />
+                                    <img className={classes.img} src={step.original_img} alt={step.label} key={"errorStepImg" + step.name}  onClick={() => window.location.href = '/detail/' + step.name} />
                                 ) : null}
                             </div>
                         ))}
@@ -438,11 +478,11 @@ export default (props) => {
 
                 <ListContainer item xs={6} style={{ marginRight: "2.4rem" }}>
                     <h2>양품(Normal)</h2>
-                    <div>{normalList.map((Element,index) => (imgList(Element.margin_ratio, Element.original_image, index, normalStep, setNormalStep, 'normal')))}</div>
+                    <div>{normalList.map((Element, index) => (imgList(Element.margin_ratio, Element.original_img, index, normalStep, setNormalStep, 'normal')))}</div>
                 </ListContainer>
                 <ListContainer item xs={6} style={{ marginLeft: "2.4rem" }}>
                     <h2>불량(Error)</h2>
-                    <div>{errorList.map((Element,index) => (imgList(Element.margin_ratio, Element.original_image, index, errorStep, setErrorStep, 'error')))}</div>
+                    <div>{errorList.map((Element, index) => (imgList(Element.margin_ratio, Element.original_img, index, errorStep, setErrorStep, 'error')))}</div>
                 </ListContainer>
 
                 <Grid item xs={4}></Grid>

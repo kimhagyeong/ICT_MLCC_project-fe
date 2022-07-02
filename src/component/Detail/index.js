@@ -167,50 +167,69 @@ const ItemList = styled(Grid)`
     }
 `;
 
-const defaultResponse = {
-    "original_img": "http://127.0.0.1:8000/media/data/1/new_normal_0152.jpg",
-    "segmentation_image": "http://127.0.0.1:8000/media/data/1/new_normal_0152.jpg",
+const sampleResponse = {
+    "Original_img": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=2000&h=2000&q=80",
+    "Segmentation_img": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1500&h=2000&q=80",
     "Box": {
-        "1-1": {
-            "box_center_x": 12,
-            "box_center_y": 34,
-            "box_width": 20,
-            "box_height": 10
+        "new_align_0361_bbox_1": {
+            "margin_x": 1195.08,
+            "margin_y": 855.92,
+            "margin_width": 109.73,
+            "margin_height": 214.52
         },
-        "1-2": {
-            "box_center_x": 12,
-            "box_center_y": 34,
-            "box_width": 20,
-            "box_height": 10
+        "new_align_0361_bbox_2": {
+            "margin_x": 96.74,
+            "margin_y": 865.18,
+            "margin_width": 103.54,
+            "margin_height": 205.72
         }
     },
     "Ratio": {
-        "1-1": 84.1234,
-        "1-2": 78.5456
+        "new_align_0361_bbox_1": 84.1234,
+        "new_align_0361_bbox_2": 78.5456
+    },
+    "Margin_list": {
+        "new_align_0361_bbox_1": [
+            {
+                "margin_x": 2290.44,
+                "margin_y": 852.98,
+                "real_margin": 56.0,
+                "margin_ratio": 0.7,
+                "margin_width": 107.49
+            },
+            {
+                "margin_x": 2290.44,
+                "margin_y": 852.98,
+                "real_margin": 56.0,
+                "margin_ratio": 0.7,
+                "margin_width": 107.49
+            },
+            {
+                "margin_x": 2290.44,
+                "margin_y": 852.98,
+                "real_margin": 56.0,
+                "margin_ratio": 0.7,
+                "margin_width": 107.49
+            }
+        ],
+        "new_align_0361_bbox_2": [
+            {
+                "margin_x": 2290.44,
+                "margin_y": 852.98,
+                "real_margin": 56.0,
+                "margin_ratio": 0.7,
+                "margin_width": 107.49
+            },
+            {
+                "margin_x": 2290.44,
+                "margin_y": 852.98,
+                "real_margin": 56.0,
+                "margin_ratio": 0.7,
+                "margin_width": 107.49
+            }
+        ]
     }
 }
-
-const defaultAnalysicBox = {
-    "box_center_x": 12,
-    "box_center_y": 34,
-    "box_width": 20,
-    "box_height": 10
-}
-const defaultRows = [
-    { id: 1, threshold: 48.000, real: 38.000, ratio: 79.167 },
-    { id: 2, threshold: 48.000, real: 38.000, ratio: 82.609 },
-    { id: 3, threshold: 48.000, real: 38.000, ratio: 84.444 },
-    { id: 4, threshold: 40.000, real: 38.000, ratio: 95.000 },
-    { id: 5, threshold: 40.000, real: 38.000, ratio: 95.000 },
-    { id: 6, threshold: 38.000, real: 38.000, ratio: 100.000 },
-    { id: 7, threshold: 38.000, real: 38.000, ratio: 100.000 },
-    { id: 8, threshold: 38.000, real: 38.000, ratio: 100.000 },
-    { id: 9, threshold: 38.000, real: 38.000, ratio: 100.000 },
-    { id: 10, threshold: 38.000, real: 38.000, ratio: 100.000 },
-    { id: "Min", threshold: 48.000, real: 38.000, ratio: 79.000 },
-    { id: "Max", threshold: 48.000, real: 38.000, ratio: 100.000 },
-    { id: "Avg", threshold: 48.000, real: 38.000, ratio: 93.500 },
-];
 
 
 export default ({ match }) => {
@@ -222,26 +241,31 @@ export default ({ match }) => {
     const [threshold, setThreshold] = React.useState(85);
     const [cutOff, setCutOff] = React.useState(5);
     const [open, setOpen] = React.useState(false);
-    const [box, setBox] = React.useState();
-    const [analysisBoxList, setanalysisBoxList] = React.useState([]);
+    const [analysisBoxList, setAnalysisBoxList] = React.useState([]);
     const [boxList, setBoxList] = React.useState([]);
 
     const [originImg, setOriginImg] = React.useState(null);
     const [segmentationImg, setSegmentationImg] = React.useState(null);
     const [rows, setRows] = React.useState([]);
-    
+
+    const [raw, setRaw] = React.useState({})
+
     useEffect(() => {
         componentDidMountApi()
-    });
+        return () => {
+            componentDidMountApi()
+        };
+    }, []);
 
     const componentDidMountApi = async () => {
         try {
             var response = await api.getDetail(match.params.img);
-            setOriginImg(response.data['original_img'])
-            if (response.data['segmentation_image']) {
-                setSegmentationImg(response.data['segmentation_image'])
+            setRaw(response.data)
+            setOriginImg(response.data['Original_img'])
+            if (response.data['Segmentation_img']) {
+                setSegmentationImg(response.data['Segmentation_img'])
             } else {
-                setSegmentationImg(response.data['original_img'])
+                setSegmentationImg(response.data['Original_img'])
             }
             let index = [];
             for (let x in response.data['Box']) {
@@ -257,34 +281,39 @@ export default ({ match }) => {
                 b.push(ele)
             };
             setBoxList(b)
-            setanalysisBoxList(b)
+            setAnalysisBoxList(b)
         } catch (e) {
             console.log(e)
-            setOriginImg(defaultResponse['original_img'])
-            setSegmentationImg(defaultResponse['segmentation_image'])
+            setRaw(sampleResponse)
+            setOriginImg(sampleResponse['Original_img'])
+            setSegmentationImg(sampleResponse['Segmentation_img'])
             let index = [];
-            for (let x in defaultResponse['Box']) {
+            for (let x in sampleResponse['Box']) {
                 index.push(x);
             }
             let b = []
             for (let value of index) {
-                
                 var _ele = {}
                 _ele.name = value;
-                _ele.ratio = defaultResponse['Ratio'][value]
-                _ele.bbox = defaultResponse['Box'][value]
+                _ele.ratio = sampleResponse['Ratio'][value]
+                _ele.bbox = sampleResponse['Box'][value]
                 _ele.b_color = 'red'
                 b.push(_ele)
             };
             setBoxList(b)
-            setanalysisBoxList(b)
+            setAnalysisBoxList(b)
         }
     }
     const getDetailApi = async () => {
         try {
             var response = await api.getDetailWithSetting(match.params.img, threshold);
-            setOriginImg(response.data['original_img'])
-
+            setRaw(response.data)
+            setOriginImg(response.data['Original_img'])
+            if (response.data['Segmentation_img']) {
+                setSegmentationImg(response.data['Segmentation_img'])
+            } else {
+                setSegmentationImg(response.data['Original_img'])
+            }
             let index = [];
             for (let x in response.data['Box']) {
                 index.push(x);
@@ -299,60 +328,55 @@ export default ({ match }) => {
                 b.push(ele)
             };
             setBoxList(b)
+            setAnalysisBoxList(b)
         } catch (e) {
             console.log(e)
-            setOriginImg(defaultResponse['original_img'])
+            setRaw(sampleResponse)
+            setOriginImg(sampleResponse['Original_img'])
+            setSegmentationImg(sampleResponse['Segmentation_img'])
             let index = [];
-            for (let x in defaultResponse['Box']) {
+            for (let x in sampleResponse['Box']) {
                 index.push(x);
             }
             let b = []
             for (let value of index) {
                 var _ele = {}
                 _ele.name = value;
-                _ele.ratio = defaultResponse['Ratio'][value]
-                _ele.bbox = defaultResponse['Box'][value]
+                _ele.ratio = sampleResponse['Ratio'][value]
+                _ele.bbox = sampleResponse['Box'][value]
                 _ele.b_color = 'red'
                 b.push(_ele)
             };
             setBoxList(b)
+            setAnalysisBoxList(b)
         }
+
     }
-    const getApiForAnalysis = async(id)=>{
-        try{
-            var response = await api.getDetailForAnalysis(match.params.img,box,id)
-            let b_list = [...boxList]
-            var ele = {}
-            ele.bbox = response.data
-            ele.b_color = 'yellow'
-            b_list.push(ele)
-            setanalysisBoxList(b_list)
-        }catch{
-            var b_list =[...boxList]
-            var _ele ={}
-            _ele.bbox = defaultAnalysicBox
-            _ele.b_color = 'yellow'
-            b_list.push(_ele)
-            setanalysisBoxList(b_list)
+    const getApiForAnalysis = async (margin_x, margin_y, margin_width) => {
+        var b_list = [...boxList]
+        var ele = {}
+        ele.bbox = {
+            "margin_x": margin_x,
+            "margin_y": margin_y,
+            "margin_width": margin_width,
+            "margin_height": 1
         }
+        ele.b_color = 'yellow'
+        b_list.push(ele)
+        setAnalysisBoxList(b_list)
     }
 
-    const getApiForDrawer = async(_box)=>{
-        try{
-            var response = await api.getDetailForDrawer(match.params.img, _box)
-            
-            if(Object.keys(response.data).length === 0){
-                setRows(defaultRows)
-            }else{
-                setRows(response.data)
-            }
-        }catch{
-            setRows(defaultRows)
-        }
+    const getApiForDrawer = async (_box) => {
+        var _box_list = []
+        raw['Margin_list'][_box].map((item, i) => {
+            var tmp_item = item
+            tmp_item.id = i
+            _box_list.push(tmp_item)
+        })
+        setRows(_box_list)
     }
 
-    const handleClickOpen = async(elem) => {
-        setBox(elem);
+    const handleClickOpen = async (elem) => {
         await getApiForDrawer(elem)
         setOpen(true);
     };
@@ -370,9 +394,9 @@ export default ({ match }) => {
     const tabHandleChange = (event, newValue) => {
         setValue(newValue);
     };
-    const tabHandleChangeWithId = (event, newValue, id) => {
+    const tabHandleChangeWithId = (event, newValue, margin_x, margin_y, margin_width) => {
         setValue(newValue);
-        getApiForAnalysis(id);
+        getApiForAnalysis(margin_x, margin_y, margin_width);
     };
     const handleChange = (event) => {
         // input value 가져오기
@@ -415,7 +439,7 @@ export default ({ match }) => {
     }
     const imgList = (elem, color, ratio) => {
         return (
-            <ImgListDiv key={"box" + elem} background={color} onClick={() => handleClickOpen(elem)}>
+            <ImgListDiv key={elem} background={color} onClick={() => handleClickOpen(elem)}>
                 <span>&nbsp;Box {elem}&nbsp;</span> <br />
                 <p>&nbsp;&nbsp;Min Margin Ratio : {ratio}</p>
             </ImgListDiv>
@@ -529,7 +553,6 @@ export default ({ match }) => {
                     toggleDrawer={toggleDrawer}
                     open={open}
                     rows={rows}
-                    // box={box}
                     tabHandleChange={tabHandleChange}
                     tabHandleChangeWithId={tabHandleChangeWithId}
                 />

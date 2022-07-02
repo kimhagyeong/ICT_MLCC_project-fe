@@ -13,7 +13,7 @@ class ImgElemContainer extends React.Component {
     handleWheel = (e) => {
         e.evt.preventDefault();
 
-        const scaleBy = 1.2;
+        const scaleBy = 1.05;
         const stage = e.target.getStage();
         const oldScale = stage.scaleX();
         const mousePointTo = {

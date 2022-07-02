@@ -83,23 +83,23 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const columns = [
-    { field: 'id', headerName: 'ID', width: 120 },
+    { field: "id", headerName: 'ID', width: 120 },
     {
-        field: 'threshold',
+        field: "margin_width",
         headerName: '마진폭',
         type: 'number',
         width: 150,
         editable: true,
     },
     {
-        field: 'real',
+        field: "real_margin",
         headerName: '실마진',
         type: 'number',
         width: 150,
         editable: true,
     },
     {
-        field: 'ratio',
+        field: "margin_ratio",
         headerName: '마진율%',
         type: 'number',
         width: 200,
@@ -133,9 +133,9 @@ export default (props) => {
                     <DataGrid
                         rows={props.rows}
                         columns={columns}
-                        pageSize={13}
+                        pageSize={10}
                         onCellClick={(params, event) => {
-                            props.tabHandleChangeWithId(this, 2,params.id)
+                            props.tabHandleChangeWithId(this, 2, params.row["margin_x"], params.row["margin_y"], params.row["margin_width"])
                         }}
 
                         // checkboxSelection
