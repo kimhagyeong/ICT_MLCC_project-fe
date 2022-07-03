@@ -168,13 +168,16 @@ const CustomGrid = styled(Grid)`
 `
 const SearchGrid = styled(Grid)`
     height:8rem;
-    justify-content:space-evenly;
-    align-tems:flex-end;
+    justify-content:center;
+    align-tems:center;
     padding-right:0 !important;
+    padding-top: 0 !important;
+    display:flex;
     button {
         width:7rem;
         height:3rem;
         font-size:1rem;
+        margin:auto;
     }
 `
 
