@@ -21,7 +21,7 @@ import Img from '../../resource/new_align_0001.jpg'
 import Img2 from '../../resource/new_align_0003.jpg'
 import Img3 from '../../resource/new_align_0005.jpg'
 import Img4 from '../../resource/new_align_0006.jpg'
-
+import moment from 'moment'
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
@@ -182,15 +182,15 @@ const sampleImgList = {
     "Normal": [
         {
             "name": "1",
-            "original_img": Img,
-            "segmentation_img": Img2,
+            "original_image": Img,
+            "segmentation_image": Img2,
             "margin_ratio": 86.2345,
             "created_date": "2022-06-12"
         },
         {
             "name": "2",
-            "original_img": Img3,
-            "segmentation_img": Img4,
+            "original_image": Img3,
+            "segmentation_image": Img4,
             "margin_ratio": 78.546,
             "created_date": "2022-06-12"
         }
@@ -198,15 +198,15 @@ const sampleImgList = {
     "Error": [
         {
             "name": "3",
-            "original_img": Img3,
-            "segmentation_img": Img4,
+            "original_image": Img3,
+            "segmentation_image": Img4,
             "margin_ratio": 78.546,
             "created_date": "2022-06-12"
         },
         {
             "name": "4",
-            "original_img": Img,
-            "segmentation_img": Img2,
+            "original_image": Img,
+            "segmentation_image": Img2,
             "margin_ratio": 86.2345,
             "created_date": "2022-06-12"
         }
@@ -265,7 +265,6 @@ export default (props) => {
     }
 
     useInterval(() => {
-        // Your custom logic here
         searchApi()
     }, 600000);
 
@@ -277,8 +276,18 @@ export default (props) => {
     }, []);
 
     const searchApi = async () => {
+        var now = new Date();
+        var start_date = moment(now).format('YYYY.MM.DD')
+        var end_date = start_date
+        if (document.getElementById('start-date') != null) {
+            start_date = document.getElementById('start-date').value.replaceAll('-', '.')
+        }
+
+        if (document.getElementById('end-date') != null) {
+            end_date = document.getElementById('end-date').value.replaceAll('-', '.')
+        }
         try {
-            var response = await api.getMainListWithSetting(document.getElementById('start-date').value.replaceAll('-', '.') + '~' + document.getElementById('end-date').value.replaceAll('-', '.'), threshold);
+            var response = await api.getMainListWithSetting(start_date + '~' + end_date, threshold);
             setNormalList(response.data['Normal'])
             setErrorList(response.data['Error'])
             setMaxNormalSteps(response.data['Normal'].length)
@@ -292,7 +301,6 @@ export default (props) => {
         }
     }
     const componentDidMountApi = async () => {
-        console.log("componentDidMountApi")
         try {
             var response = await api.getMainList();
             setNormalList(response.data['Normal'])
@@ -411,7 +419,7 @@ export default (props) => {
                         {normalList.map((step, index) => (
                             <div key={"normalStepDiv" + index}>
                                 {Math.abs(normalStep - index) <= 2 ? (
-                                    <img className={classes.img} src={step.original_img} alt={step.label} key={"normalStepImg" + step.name} onClick={() => window.location.href = '/detail/' + step.name} />
+                                    <img className={classes.img} src={step.original_image} alt={step.label} key={"normalStepImg" + step.name} onClick={() => window.location.href = '/detail/' + step.name} />
                                 ) : null}
                             </div>
                         ))}
@@ -444,9 +452,9 @@ export default (props) => {
                         enableMouseEvents
                     >
                         {errorList.map((step, index) => (
-                            <div key={"errorStepDiv" + step.original_img}>
+                            <div key={"errorStepDiv" + step.original_image}>
                                 {Math.abs(errorStep - index) <= 2 ? (
-                                    <img className={classes.img} src={step.original_img} alt={step.label} key={"errorStepImg" + step.name}  onClick={() => window.location.href = '/detail/' + step.name} />
+                                    <img className={classes.img} src={step.original_image} alt={step.label} key={"errorStepImg" + step.name} onClick={() => window.location.href = '/detail/' + step.name} />
                                 ) : null}
                             </div>
                         ))}
@@ -478,11 +486,11 @@ export default (props) => {
 
                 <ListContainer item xs={6} style={{ marginRight: "2.4rem" }}>
                     <h2>양품(Normal)</h2>
-                    <div>{normalList.map((Element, index) => (imgList(Element.margin_ratio, Element.original_img, index, normalStep, setNormalStep, 'normal')))}</div>
+                    <div>{normalList.map((Element, index) => (imgList(Element.margin_ratio, Element.original_image, index, normalStep, setNormalStep, 'normal')))}</div>
                 </ListContainer>
                 <ListContainer item xs={6} style={{ marginLeft: "2.4rem" }}>
                     <h2>불량(Error)</h2>
-                    <div>{errorList.map((Element, index) => (imgList(Element.margin_ratio, Element.original_img, index, errorStep, setErrorStep, 'error')))}</div>
+                    <div>{errorList.map((Element, index) => (imgList(Element.margin_ratio, Element.original_image, index, errorStep, setErrorStep, 'error')))}</div>
                 </ListContainer>
 
                 <Grid item xs={4}></Grid>
@@ -578,7 +586,7 @@ export default (props) => {
 
                 <SearchGrid item xs={1}>
                     <Button
-                        className="admin-setting"
+                        id="search-btn"
                         variant="contained"
                         color="default"
                         onClick={handleSearch}

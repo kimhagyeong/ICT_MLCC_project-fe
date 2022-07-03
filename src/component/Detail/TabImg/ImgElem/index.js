@@ -47,10 +47,10 @@ export default (props) => {
                     {props.bbox.map((elem, key) => (
                         <Rect
                             key={key}
-                            x={elem.bbox['margin_x']}
-                            y={elem.bbox['margin_y']}
-                            width={elem.bbox['margin_width']}
-                            height={elem.bbox['margin_height']}
+                            x={elem.bbox['box_x']}
+                            y={elem.bbox['box_y']}
+                            width={elem.bbox['box_width']}
+                            height={elem.bbox['box_height']}
                             stroke={elem.b_color}
                         />)
                     )}

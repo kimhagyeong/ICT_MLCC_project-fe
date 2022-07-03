@@ -14,7 +14,6 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import Drawer from './TabImg/drawer'
 import Button from '@material-ui/core/Button';
 import api from '../../api'
-
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
 
@@ -172,16 +171,16 @@ const sampleResponse = {
     "Segmentation_img": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1500&h=2000&q=80",
     "Box": {
         "new_align_0361_bbox_1": {
-            "margin_x": 1195.08,
-            "margin_y": 855.92,
-            "margin_width": 109.73,
-            "margin_height": 214.52
+            "box_x": 1195.08,
+            "box_y": 855.92,
+            "box_width": 109.73,
+            "box_height": 214.52
         },
         "new_align_0361_bbox_2": {
-            "margin_x": 96.74,
-            "margin_y": 865.18,
-            "margin_width": 103.54,
-            "margin_height": 205.72
+            "box_x": 96.74,
+            "box_y": 865.18,
+            "box_width": 103.54,
+            "box_height": 205.72
         }
     },
     "Ratio": {
@@ -250,16 +249,9 @@ export default ({ match }) => {
 
     const [raw, setRaw] = React.useState({})
 
-    useEffect(() => {
-        componentDidMountApi()
-        return () => {
-            componentDidMountApi()
-        };
-    }, []);
-
-    const componentDidMountApi = async () => {
+    const componentDidMountApi = async (__img) => {
         try {
-            var response = await api.getDetail(match.params.img);
+            var response = await api.getDetail(__img);
             setRaw(response.data)
             setOriginImg(response.data['Original_img'])
             if (response.data['Segmentation_img']) {
@@ -304,6 +296,14 @@ export default ({ match }) => {
             setAnalysisBoxList(b)
         }
     }
+    useEffect(() => {
+        componentDidMountApi(match.params.img)
+        return () => {
+            componentDidMountApi(match.params.img)
+        };
+    }, [match.params.img]);
+
+
     const getDetailApi = async () => {
         try {
             var response = await api.getDetailWithSetting(match.params.img, threshold);
@@ -356,10 +356,10 @@ export default ({ match }) => {
         var b_list = [...boxList]
         var ele = {}
         ele.bbox = {
-            "margin_x": margin_x,
-            "margin_y": margin_y,
-            "margin_width": margin_width,
-            "margin_height": 1
+            "box_x": margin_x,
+            "box_y": margin_y,
+            "box_width": margin_width,
+            "box_height": 1
         }
         ele.b_color = 'yellow'
         b_list.push(ele)
@@ -371,7 +371,7 @@ export default ({ match }) => {
         raw['Margin_list'][_box].map((item, i) => {
             var tmp_item = item
             tmp_item.id = i
-            _box_list.push(tmp_item)
+            return _box_list.push(tmp_item)
         })
         setRows(_box_list)
     }
