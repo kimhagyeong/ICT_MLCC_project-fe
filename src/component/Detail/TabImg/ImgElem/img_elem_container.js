@@ -39,8 +39,6 @@ class ImgElemContainer extends React.Component {
     }
     render() {
         return (
-            // default image size를 바꾸고 싶을때는 여기로....
-            // resize 툴 크기 만큼 자르변 적용되게 하려면 작업이 필요ㅠ무뭄
             <Stage
                 width={1344}
                 height={710.4}

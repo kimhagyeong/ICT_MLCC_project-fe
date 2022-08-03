@@ -167,8 +167,8 @@ const ItemList = styled(Grid)`
 `;
 
 const sampleResponse = {
-    "Original_img": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=2000&h=2000&q=80",
-    "Segmentation_img": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1500&h=2000&q=80",
+    "Original_image": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=2000&h=2000&q=80",
+    "Segmentation_image": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1500&h=2000&q=80",
     "Box": {
         "new_align_0361_bbox_1": {
             "box_x": 1195.08,
@@ -227,7 +227,8 @@ const sampleResponse = {
                 "margin_width": 107.49
             }
         ]
-    }
+    },
+    "Cvat_url": "https://cvat.org"
 }
 
 
@@ -247,17 +248,19 @@ export default ({ match }) => {
     const [segmentationImg, setSegmentationImg] = React.useState(null);
     const [rows, setRows] = React.useState([]);
 
-    const [raw, setRaw] = React.useState({})
+    const [raw, setRaw] = React.useState({});
+    const [cvatUrl, setCvatUrl] = React.useState("https://cvat.org");
 
     const componentDidMountApi = async (__img) => {
         try {
             var response = await api.getDetail(__img);
             setRaw(response.data)
-            setOriginImg(response.data['Original_img'])
-            if (response.data['Segmentation_img']) {
-                setSegmentationImg(response.data['Segmentation_img'])
+            setCvatUrl(response.data['Cvat_url'])
+            setOriginImg(response.data['Original_image'])
+            if (response.data['Segmentation_image']) {
+                setSegmentationImg(response.data['Segmentation_image'])
             } else {
-                setSegmentationImg(response.data['Original_img'])
+                setSegmentationImg(response.data['Original_image'])
             }
             let index = [];
             for (let x in response.data['Box']) {
@@ -277,8 +280,9 @@ export default ({ match }) => {
         } catch (e) {
             console.log(e)
             setRaw(sampleResponse)
-            setOriginImg(sampleResponse['Original_img'])
-            setSegmentationImg(sampleResponse['Segmentation_img'])
+            setCvatUrl(sampleResponse['Cvat_url'])
+            setOriginImg(sampleResponse['Original_image'])
+            setSegmentationImg(sampleResponse['Segmentation_image'])
             let index = [];
             for (let x in sampleResponse['Box']) {
                 index.push(x);
@@ -308,11 +312,12 @@ export default ({ match }) => {
         try {
             var response = await api.getDetailWithSetting(match.params.img, threshold);
             setRaw(response.data)
-            setOriginImg(response.data['Original_img'])
-            if (response.data['Segmentation_img']) {
-                setSegmentationImg(response.data['Segmentation_img'])
+            setCvatUrl(response.data['Cvat_url'])
+            setOriginImg(response.data['Original_image'])
+            if (response.data['Segmentation_image']) {
+                setSegmentationImg(response.data['Segmentation_image'])
             } else {
-                setSegmentationImg(response.data['Original_img'])
+                setSegmentationImg(response.data['Original_image'])
             }
             let index = [];
             for (let x in response.data['Box']) {
@@ -331,9 +336,10 @@ export default ({ match }) => {
             setAnalysisBoxList(b)
         } catch (e) {
             console.log(e)
+            setCvatUrl(sampleResponse['Cvat_url'])
             setRaw(sampleResponse)
-            setOriginImg(sampleResponse['Original_img'])
-            setSegmentationImg(sampleResponse['Segmentation_img'])
+            setOriginImg(sampleResponse['Original_image'])
+            setSegmentationImg(sampleResponse['Segmentation_image'])
             let index = [];
             for (let x in sampleResponse['Box']) {
                 index.push(x);
@@ -359,9 +365,9 @@ export default ({ match }) => {
             "box_x": margin_x,
             "box_y": margin_y,
             "box_width": margin_width,
-            "box_height": 1
+            "box_height": 0.1
         }
-        ele.b_color = 'yellow'
+        ele.b_color = 'red'
         b_list.push(ele)
         setAnalysisBoxList(b_list)
     }
@@ -437,11 +443,11 @@ export default ({ match }) => {
     const handleSearch = () => {
         getDetailApi()
     }
-    const imgList = (elem, color, ratio) => {
+    const imgList = (i, elem, color, ratio) => {
         return (
             <ImgListDiv key={elem} background={color} onClick={() => handleClickOpen(elem)}>
-                <span>&nbsp;Box {elem}&nbsp;</span> <br />
-                <p>&nbsp;&nbsp;Min Margin Ratio : {ratio}</p>
+                <span>&nbsp;{elem}&nbsp;</span> <br />
+                <p>&nbsp;&nbsp;Min Margin Ratio : {ratio.toFixed(3)}</p>
             </ImgListDiv>
         )
     }
@@ -471,20 +477,20 @@ export default ({ match }) => {
                             <AntTab label="Analysis" {...a11yProps(2)} />
                         </AntTabs>
                         <TabPanel value={value} index={0}>
-                            <OriginalTab path={match.params.img} img={originImg} />
+                            <OriginalTab path={match.params.img} img={originImg} cvatUrl={cvatUrl} />
                         </TabPanel>
                         <TabPanel value={value} index={1}>
-                            <BoxTab path={match.params.img} img={segmentationImg} bbox={boxList} />
+                            <BoxTab path={match.params.img} img={segmentationImg} bbox={boxList} cvatUrl={cvatUrl} />
                         </TabPanel>
                         <TabPanel value={value} index={2}>
-                            <AnalysisTab path={match.params.img} img={segmentationImg} bbox={analysisBoxList} />
+                            <AnalysisTab path={match.params.img} img={segmentationImg} bbox={analysisBoxList} cvatUrl={cvatUrl} />
                         </TabPanel>
                     </div>
                 </Grid>
 
                 <ItemList item xs={3}>
                     <div>
-                        {boxList.map((Element) => (imgList(Element.name, setWarningColor(Element.ratio), Element.ratio)))}
+                        {boxList.map((Element, i) => (imgList(i, Element.name, setWarningColor(Element.ratio), Element.ratio)))}
                     </div>
                     <div>
                         <form name="setting">

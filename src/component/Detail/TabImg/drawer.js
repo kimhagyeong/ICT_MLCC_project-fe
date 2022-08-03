@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
         marginRight: 0,
     },
     list: {
-        width: 700,
+        width: 800,
     },
     fullList: {
         width: 'auto',
@@ -83,19 +83,19 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const columns = [
-    { field: "id", headerName: 'ID', width: 120 },
+    { field: "id", headerName: 'ID', width: 150 },
     {
         field: "margin_width",
         headerName: '마진폭',
         type: 'number',
-        width: 150,
+        width: 180,
         editable: true,
     },
     {
         field: "real_margin",
         headerName: '실마진',
         type: 'number',
-        width: 150,
+        width: 180,
         editable: true,
     },
     {
@@ -129,11 +129,11 @@ export default (props) => {
                     </IconButton>
                 </div>
                 <Divider />
-                <div style={{ height: "35rem" }}>
+                <div style={{ height: "90vh" }}>
                     <DataGrid
                         rows={props.rows}
                         columns={columns}
-                        pageSize={10}
+                        pageSize={20}
                         onCellClick={(params, event) => {
                             props.tabHandleChangeWithId(this, 2, params.row["margin_x"], params.row["margin_y"], params.row["margin_width"])
                         }}

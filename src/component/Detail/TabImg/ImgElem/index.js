@@ -17,6 +17,19 @@ const Div = styled.div`
     overflow:hidden;
     margin:auto;
     position:relative;
+    &>div{
+        width:100% !important;
+        height:100% !important;
+    }
+    &>div>div{
+        width:100% !important;
+        height:100% !important;
+    }
+    &>div>div>canvas{
+        width:100% !important;
+        height:100% !important;
+    }
+    
 `;
 const Bottom = styled.div`
     width: 100%;
@@ -70,7 +83,7 @@ export default (props) => {
 
             <Bottom>
 
-                <IconButton aria-label="back" style={{ textAlign: "right" }} >
+                <IconButton aria-label="back" style={{ textAlign: "right" }} onClick={() => window.open("https://cvat.org")}>
                     <BuildIcon />
                 </IconButton>
 

@@ -75,13 +75,14 @@ export default (props) => {
 
     useEffect(() => {
         if (getCookie("access") !== null) {
-            handleSettingOff()
             if (getCookie("access") !== "access=") {
                 setIsLogin(true)
                 handleSettingOn()
-            }else{
+            } else {
                 handleSettingOff()
             }
+        } else {
+            handleSettingOff()
         }
     }, []);
 
@@ -110,17 +111,17 @@ export default (props) => {
         setOpen(true);
     };
 
-    const handleSettingOn = () =>{
+    const handleSettingOn = () => {
         var items = document.getElementsByClassName("admin-setting")
         for (var i = 0; i < items.length; i++) {
-            items[i].style.display='flex'
+            items[i].style.display = 'flex'
         }
     }
 
-    const handleSettingOff = () =>{
+    const handleSettingOff = () => {
         var items = document.getElementsByClassName("admin-setting")
         for (var i = 0; i < items.length; i++) {
-            items[i].style.display='none'
+            items[i].style.display = 'none'
         }
     }
 

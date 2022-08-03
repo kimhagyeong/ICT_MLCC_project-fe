@@ -7,6 +7,7 @@ export default (props) => {
         <ImgElem
             path={props.path}
             img={props.img}
+            cvatUrl={props.cvatUrl}
         />
     )
 }

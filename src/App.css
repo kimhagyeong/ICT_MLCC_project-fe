@@ -9,7 +9,8 @@
 }
 
 html {
-  font-size: 19.20px;
+  font-size: 19.10px;
+  /* font-size: 25.50px; */
 }
 
 div {
@@ -18,4 +19,9 @@ div {
 
 .MuiBackdrop-root {
   background-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  width: 500px;
+  height: 500px;
 }

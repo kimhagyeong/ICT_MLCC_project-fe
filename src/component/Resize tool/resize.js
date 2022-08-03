@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Resizable } from "re-resizable";
 import Login from './login.js'
+import Setting from './setting'
 
 const style = {
     display: "flex",
@@ -22,6 +23,8 @@ export default (props) => {
                 defaultSize={{
                     width: "1920px",
                     height: "1080px"
+                    // width: "2550px",
+                    // height: "1280px"
                 }}
                 // minHeight
                 // minWidth
@@ -36,6 +39,7 @@ export default (props) => {
             >
                 {props.children}
                 <Login></Login>
+                <Setting></Setting>
             </Resizable>
 
         </>
