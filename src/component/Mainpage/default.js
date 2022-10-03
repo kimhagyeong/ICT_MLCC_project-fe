@@ -187,6 +187,7 @@ const sampleImgList = {
             "name": "1",
             "original_image": Img,
             "segmentation_image": Img2,
+            "source_pc": "pc5",
             "margin_ratio": 90.2345,
             "created_date": "2022-06-12"
         },
@@ -194,6 +195,7 @@ const sampleImgList = {
             "name": "2",
             "original_image": Img3,
             "segmentation_image": Img4,
+            "source_pc": "pc5",
             "margin_ratio": 90.546,
             "created_date": "2022-06-12"
         }
@@ -335,7 +337,7 @@ export default (props) => {
         }
     }
 
-    const imgList = (ratio, name, index, propsStep, setStep, label) => {
+    const imgList = (ratio, name, index, propsStep, setStep, label, source_pc) => {
 
         return (
             <ListDiv background={setWarningColor(ratio)} key={"List" + label + index} onClick={() => handleClickList(index, setStep)}>
@@ -343,7 +345,7 @@ export default (props) => {
                     {propsStep === index ? <ArrowRightAltIcon /> : null}
                 </Grid>
                 <Grid item xs={11}>
-                    <Button variant="primary" >{name.substring(name.lastIndexOf('/') + 1, name.length)}</Button>
+                    <Button variant="primary" >{source_pc} &nbsp; | &nbsp; {name.substring(name.lastIndexOf('/') + 1, name.length)}</Button>
                 </Grid>
             </ListDiv>
         )
@@ -487,11 +489,11 @@ export default (props) => {
 
                 <ListContainer item xs={6} style={{ marginRight: "2.4rem" }}>
                     <h2>양품(Normal)</h2>
-                    <div>{normalList.map((Element, index) => (imgList(Element.margin_ratio, Element.original_image, index, normalStep, setNormalStep, 'normal')))}</div>
+                    <div>{normalList.map((Element, index) => (imgList(Element.margin_ratio, Element.original_image, index, normalStep, setNormalStep, 'normal',Element.source_pc)))}</div>
                 </ListContainer>
                 <ListContainer item xs={6} style={{ marginLeft: "2.4rem" }}>
                     <h2>불량(Error)</h2>
-                    <div>{errorList.map((Element, index) => (imgList(Element.margin_ratio, Element.original_image, index, errorStep, setErrorStep, 'error')))}</div>
+                    <div>{errorList.map((Element, index) => (imgList(Element.margin_ratio, Element.original_image, index, errorStep, setErrorStep, 'error',Element.source_pc)))}</div>
                 </ListContainer>
 
                 <Grid item xs={2}></Grid>

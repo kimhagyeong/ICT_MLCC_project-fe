@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Resizable } from "re-resizable";
 import Login from './login.js'
 import Setting from './setting'
@@ -15,14 +15,59 @@ const style = {
 export default (props) => {
     const [width, setWidth] = useState("99vw");
     const [height, setHeight] = useState("55vw");
+    const [isLogin, setIsLogin] = React.useState(false);
+
+    useEffect(() => {
+        if (getCookie("access") !== null) {
+            if (getCookie("access") !== "access=") {
+                setIsLogin(true)
+                handleSettingOn()
+            } else {
+                handleSettingOff()
+            }
+        } else {
+            handleSettingOff()
+        }
+    }, []);
+
+    const getCookie = (name) => {
+        // 변수를 선언한다.
+        const cookies = document.cookie.split(";");
+
+        // 쿠키를 추출한다.
+        for (var i in cookies) {
+            if (cookies[i].search(name) !== -1) {
+                return cookies[i];
+            }
+        }
+        return null;
+    };
+
+    const handleSettingOn = () => {
+        var items = document.getElementsByClassName("admin-setting")
+        for (var i = 0; i < items.length; i++) {
+            items[i].style.display = 'flex'
+        }
+    }
+
+    const handleSettingOff = () => {
+        var items = document.getElementsByClassName("admin-setting")
+        for (var i = 0; i < items.length; i++) {
+            items[i].style.display = 'none'
+        }
+    }
+
+    const setLogin=(value)=>{
+        setIsLogin(value)
+    }
 
     return (
         <>
             <Resizable
                 style={style}
                 defaultSize={{
-                    width: "1920px",
-                    height: "1080px"
+                    width: "1910px",
+                    height: "960px"
                     // width: "2550px",
                     // height: "1280px"
                 }}
@@ -38,8 +83,8 @@ export default (props) => {
                 }}
             >
                 {props.children}
-                <Login></Login>
-                <Setting></Setting>
+                <Login isLogin={isLogin} setLogin={setLogin}></Login>
+                <Setting isLogin={isLogin} setLogin={setLogin}></Setting>
             </Resizable>
 
         </>

@@ -71,11 +71,13 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
+const _log=[{"id":407,"filename":"new_align_0361.jpg","dt":"2022-08-08T02:30:12.853383+09:00"}]
 
 export default (props) => {
     // useEffect 써서 access 토큰 사용해서 메인페이지로 가야하는지 판단
     const classes = useStyles();
-    const [threshold, setThreshold] = React.useState(85);
+    const [threshold, setThreshold] = React.useState(1);
+    const [log, setLog] = React.useState(_log);
 
     const getSettingMode = async () => {
         var access = getCookie("access")
@@ -84,17 +86,16 @@ export default (props) => {
             if (access !== null || access !== "") {
                 // api 호출문 작성, 성공시 
                 try {
-                    var header = {
-                        headers: {
-                            token: access
-                        }
-                    }
-                    var response = await api.getSettingMode(header)
-                    // var response = await api.getSettingMode()
-                    if (response.data === "auto") {
+                    // var response = await api.getSettingMode(header)
+                    var response = await api.getSettingMode()
+                    if (response.data.mode === "auto") {
                         window.location.href = '/'
-                    } else {
-                        window.location.href = '/'
+                    } else{
+                        var response_thr = await api.getThrMode(access)
+                        setThreshold(response_thr.data.threshold)
+                        document.querySelector('input[name="threshold"]').value = response_thr.data.threshold;
+                        var response_log = await api.getLog(access)
+                        setLog(response_log.data)
                     }
                 } catch (e) {
                     console.log(e)
@@ -143,7 +144,14 @@ export default (props) => {
                 console.log("error!");
         }
     };
-
+    const handleSubmit = async ()=>{
+        try{
+            await api.setThrMode( getCookie("access").replace("access=", ""), threshold)
+        }catch(e){
+            console.log(e)
+            alert("threshold 설정에 실패했습니다. 로그인, 네트워크를 확인해주세요")
+        }
+    }
     return (
         <div className={classes.root}>
             <Grid container spacing={3}>
@@ -151,11 +159,10 @@ export default (props) => {
                     <Paper className={classes.paper1}>
                         <h3 className={classes.h3}>처리 이미지 목록</h3>
                         <Paper className={classes.paper1_1}>
-                            <Button className={classes.button}>.../.../abc.jpg <p className={classes.p}>2022.07.25 14:05:20</p></Button>
-                            <Button className={classes.button}>.../.../abc.jpg <p className={classes.p}>2022.07.25 14:05:20</p></Button>
-                            <Button className={classes.button}>.../.../abc.jpg <p className={classes.p}>2022.07.25 14:05:20</p></Button>
-                            <Button className={classes.button}>.../.../abc.jpg <p className={classes.p}>2022.07.25 14:05:20</p></Button>
-                            <Button className={classes.button}>.../.../abc.jpg <p className={classes.p}>2022.07.25 14:05:20</p></Button>
+                            {/* <Button className={classes.button}>.../.../abc.jpg <p className={classes.p}>2022.07.25 14:05:20</p></Button> */}
+                            {log.map((step, index) => (
+                            <Button key={"log" + index} className={classes.button}>{step.filename}<p className={classes.p}>{step.dt}</p></Button>
+                            ))}
                         </Paper>
                     </Paper>
                 </Grid>
@@ -171,7 +178,7 @@ export default (props) => {
                             onChange={handleChange}
                             endAdornment={<InputAdornment position="end">%</InputAdornment>}
                         />
-                        <Button className={classes.input_btn}>적용</Button>
+                        <Button className={classes.input_btn} onClick={handleSubmit}>적용</Button>
                     </Paper>
                 </Grid>
             </Grid>

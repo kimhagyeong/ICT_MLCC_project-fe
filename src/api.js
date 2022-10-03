@@ -18,11 +18,11 @@ axios.defaults.baseURL = "http://127.0.0.1:8000"
 
 export default {
   signin(data) {
-    return axios.post("/signin/", data);
+    return axios.post("/signin", data);
   },
 
   signup(data) {
-    return axios.post("/signup/", data);
+    return axios.post("/signup", data);
   },
 
   getMainList() {
@@ -44,15 +44,67 @@ export default {
   getDetailForDrawer(name, box) {
     return axios.get("/detail/" + name + "?box=" + box)
   },
-  getSettingMode(header) {
-    return axios.get("/setting/mode", header)
+
+  // getSettingMode(access){
+  //   return axios.get("/setting/mode", {
+  //     headers:{
+  //       token:access
+  //     }
+  //   })
+  // },
+  getSettingMode(access){
+    return axios({
+      method: 'get',
+      url: 'http://127.0.0.1:8000/setting/mode',
+      headers: { 
+        'token':access
+      }
+    })
   },
-  // getSettingMode(){
-  //   return axios.get("/setting/mode",{
-  //       headers: {
-  //         token: getCookie("access").replace("access=","")
+  settingMode(access,mode) {
+    return axios({
+      method: 'post',
+      url: 'http://127.0.0.1:8000/setting',
+      headers: { 
+        'token':access,
+        'mode': mode
+      }
+    })
+  },
+
+  getThrMode(access){
+    return axios({
+      method: 'get',
+      url: 'http://127.0.0.1:8000/setting/thr',
+      headers: { 
+        'token':access
+      }
+    })
+  },
+
+  setThrMode(access,thr){
+    return axios({
+      method: 'post',
+      url: 'http://127.0.0.1:8000/setting',
+      headers: { 
+        'token':access,
+        'threshold': thr
+      }
+    })
+  },
+  // learningMode(access,thr){
+  //   return axios.post("/setting", {
+  //     headers:{
+  //       // token:header,
+  //       threshold:thr,
   //     }
   //   })
   // }
+  getLog(access){
+    return axios({
+      method: 'get',
+      url: 'http://127.0.0.1:8000/log'
+    })
+  }
 };
 

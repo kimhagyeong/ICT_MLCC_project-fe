@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -71,33 +71,6 @@ export default (props) => {
     const classes = useStyles();
     const theme = useTheme();
     const [value, setValue] = React.useState(0);
-    const [isLogin, setIsLogin] = React.useState(false);
-
-    useEffect(() => {
-        if (getCookie("access") !== null) {
-            if (getCookie("access") !== "access=") {
-                setIsLogin(true)
-                handleSettingOn()
-            } else {
-                handleSettingOff()
-            }
-        } else {
-            handleSettingOff()
-        }
-    }, []);
-
-    const getCookie = (name) => {
-        // 변수를 선언한다.
-        const cookies = document.cookie.split(";");
-
-        // 쿠키를 추출한다.
-        for (var i in cookies) {
-            if (cookies[i].search(name) !== -1) {
-                return cookies[i];
-            }
-        }
-        return null;
-    };
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -126,11 +99,12 @@ export default (props) => {
     }
 
     const handleLogout = () => {
-        document.cookie = "access=;"
+        document.cookie = 'access=; expires=Thu, 01 Jan 1999 00:00:10 GMT;';
         alert("로그아웃 되었습니다.")
-        setIsLogin(false)
+        props.setLogin(false)
 
         handleSettingOff()
+        window.location.href = '/'
     }
 
     const handleClose = () => {
@@ -148,7 +122,7 @@ export default (props) => {
                     password: _password
                 })
                 document.cookie = "access=" + response.data['token'];
-                setIsLogin(true)
+                props.setLogin(true)
                 setOpen(false)
                 handleSettingOn()
             } else {
@@ -181,8 +155,8 @@ export default (props) => {
             if (error.message === "Token error") {
                 alert(error.message)
             } else {
-                console.log(error.response.request.response)
-                alert(error.response.request.response)
+                console.log(error)
+                alert(error)
             }
 
         }
@@ -190,7 +164,7 @@ export default (props) => {
     return (
         <>
             {props.children}
-            {isLogin ?
+            {props.isLogin ?
                 <LoginButton variant="contained" color="primary" onClick={handleLogout}>
                     Logout
                 </LoginButton> :
